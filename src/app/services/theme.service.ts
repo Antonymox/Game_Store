@@ -1,4 +1,4 @@
-import { Injectable, type Renderer2, type RendererFactory2 } from "@angular/core"
+import { Injectable, Renderer2, RendererFactory2 } from "@angular/core"
 import { BehaviorSubject } from "rxjs"
 
 export type Theme = "light" | "dark"
@@ -20,14 +20,12 @@ export class ThemeService {
 
   private getInitialTheme(): Theme {
     console.log("ThemeService: Obteniendo tema inicial")
-    // Obtener tema del localStorage o usar preferencia del sistema
     const savedTheme = localStorage.getItem("theme") as Theme
     if (savedTheme) {
       console.log(`ThemeService: Tema encontrado en localStorage: ${savedTheme}`)
       return savedTheme
     }
 
-    // Usar preferencia del sistema como fallback
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
     console.log(`ThemeService: Preferencia del sistema - modo oscuro: ${prefersDark}`)
     return prefersDark ? "dark" : "light"
@@ -46,7 +44,6 @@ export class ThemeService {
     localStorage.setItem("theme", theme)
     console.log(`ThemeService: Tema guardado en localStorage: ${theme}`)
 
-    // Aplicar clase al elemento HTML y BODY
     const html = document.querySelector("html")
     const body = document.body
 
@@ -58,29 +55,22 @@ export class ThemeService {
         html.classList.remove("light-theme")
         body.classList.add("dark-theme")
         body.classList.remove("light-theme")
-
-        // Aplicar estilos directamente para asegurar el cambio visual
         body.style.backgroundColor = "#121212"
         body.style.color = "#f5f5f7"
-
         console.log("ThemeService: Clase dark-theme añadida, light-theme eliminada")
       } else {
         html.classList.add("light-theme")
         html.classList.remove("dark-theme")
         body.classList.add("light-theme")
         body.classList.remove("dark-theme")
-
-        // Aplicar estilos directamente para asegurar el cambio visual
         body.style.backgroundColor = "#f5f5f7"
         body.style.color = "#1a1a2e"
-
         console.log("ThemeService: Clase light-theme añadida, dark-theme eliminada")
       }
     } else {
       console.error("ThemeService: No se pudo encontrar el elemento HTML o BODY")
     }
 
-    // Verificar si las clases se aplicaron correctamente
     if (html) {
       console.log(`ThemeService: Clases actuales en HTML: ${html.className}`)
     }
@@ -88,7 +78,6 @@ export class ThemeService {
       console.log(`ThemeService: Clases actuales en BODY: ${body.className}`)
     }
 
-    // Forzar la aplicación de estilos específicos para componentes clave
     this.applySpecificStyles(theme)
   }
 
@@ -100,11 +89,9 @@ export class ThemeService {
     this.setTheme(newTheme)
   }
 
-  // Aplicar estilos específicos a componentes clave para asegurar el cambio visual
   private applySpecificStyles(theme: Theme): void {
     console.log("ThemeService: Aplicando estilos específicos a componentes clave")
 
-    // Aplicar estilos al header
     const header = document.querySelector("header")
     if (header) {
       if (theme === "dark") {
@@ -114,7 +101,6 @@ export class ThemeService {
       }
     }
 
-    // Aplicar estilos al footer
     const footer = document.querySelector("footer")
     if (footer) {
       if (theme === "dark") {
@@ -124,7 +110,6 @@ export class ThemeService {
       }
     }
 
-    // Aplicar estilos a las tarjetas de juegos
     const gameCards = document.querySelectorAll(".game-card")
     gameCards.forEach((card) => {
       if (theme === "dark") {
@@ -140,7 +125,6 @@ export class ThemeService {
       }
     })
 
-    // Aplicar estilos a los inputs
     const inputs = document.querySelectorAll("input, select, textarea")
     inputs.forEach((input) => {
       if (theme === "dark") {
@@ -156,111 +140,63 @@ export class ThemeService {
       }
     })
 
-    // Aplicar estilos a todos los textos y títulos
     this.applyTextStyles(theme)
   }
 
-  // Aplicar estilos específicos a textos y títulos
   private applyTextStyles(theme: Theme): void {
     console.log("ThemeService: Aplicando estilos a textos y títulos")
 
-    // Colores para modo oscuro
-    const darkTextPrimary = "#f5f5f7"
     const darkTextSecondary = "#b0b0b0"
-    const darkTextTertiary = "#808080"
     const darkLinkColor = "#ff6b8b"
     const darkHeadingColor = "#ffffff"
 
-    // Colores para modo claro
-    const lightTextPrimary = "#1a1a2e"
     const lightTextSecondary = "#666666"
-    const lightTextTertiary = "#999999"
     const lightLinkColor = "#e94560"
     const lightHeadingColor = "#1a1a2e"
 
-    // Aplicar estilos a párrafos
     const paragraphs = document.querySelectorAll("p")
     paragraphs.forEach((p) => {
-      if (theme === "dark") {
-        p.style.color = darkTextSecondary
-      } else {
-        p.style.color = lightTextSecondary
-      }
+      (p as HTMLElement).style.color = theme === "dark" ? darkTextSecondary : lightTextSecondary
     })
 
-    // Aplicar estilos a títulos
     const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6")
     headings.forEach((heading) => {
-      if (theme === "dark") {
-        heading.style.color = darkHeadingColor
-      } else {
-        heading.style.color = lightHeadingColor
-      }
+      (heading as HTMLElement).style.color = theme === "dark" ? darkHeadingColor : lightHeadingColor
     })
 
-    // Aplicar estilos a enlaces
     const links = document.querySelectorAll("a:not(.btn)")
     links.forEach((link) => {
-      if (theme === "dark") {
-        link.style.color = darkLinkColor
-      } else {
-        link.style.color = lightLinkColor
-      }
+      (link as HTMLElement).style.color = theme === "dark" ? darkLinkColor : lightLinkColor
     })
 
-    // Aplicar estilos a etiquetas span
     const spans = document.querySelectorAll("span")
     spans.forEach((span) => {
-      // No cambiar el color de spans dentro de botones o con clases específicas
       if (!span.closest("button") && !span.classList.contains("cart-count")) {
-        if (theme === "dark") {
-          span.style.color = darkTextSecondary
-        } else {
-          span.style.color = lightTextSecondary
-        }
+        (span as HTMLElement).style.color = theme === "dark" ? darkTextSecondary : lightTextSecondary
       }
     })
 
-    // Aplicar estilos a elementos específicos por clase
     const gameCategories = document.querySelectorAll(".game-category")
     gameCategories.forEach((category) => {
-      if (theme === "dark") {
-        category.setAttribute("style", "color: #b0b0b0 !important;")
-      } else {
-        category.setAttribute("style", "color: #666666 !important;")
-      }
+      category.setAttribute("style", `color: ${theme === "dark" ? darkTextSecondary : lightTextSecondary} !important;`)
     })
 
     const gameTitles = document.querySelectorAll(".game-title a")
     gameTitles.forEach((title) => {
-      if (theme === "dark") {
-        title.setAttribute("style", "color: #ffffff !important;")
-      } else {
-        title.setAttribute("style", "color: #1a1a2e !important;")
-      }
+      title.setAttribute("style", `color: ${theme === "dark" ? "#ffffff" : "#1a1a2e"} !important;`)
     })
 
     const sectionHeaders = document.querySelectorAll(".section-header h2")
     sectionHeaders.forEach((header) => {
-      if (theme === "dark") {
-        header.setAttribute("style", "color: #ffffff !important;")
-      } else {
-        header.setAttribute("style", "color: #1a1a2e !important;")
-      }
+      header.setAttribute("style", `color: ${theme === "dark" ? "#ffffff" : "#1a1a2e"} !important;`)
     })
 
-    // Aplicar estilos a descripciones de juegos
     const gameDescriptions = document.querySelectorAll(".game-description p")
     gameDescriptions.forEach((desc) => {
-      if (theme === "dark") {
-        desc.setAttribute("style", "color: #b0b0b0 !important;")
-      } else {
-        desc.setAttribute("style", "color: #666666 !important;")
-      }
+      desc.setAttribute("style", `color: ${theme === "dark" ? darkTextSecondary : lightTextSecondary} !important;`)
     })
   }
 
-  // Método para depuración
   logCurrentState(): void {
     const html = document.querySelector("html")
     const body = document.body

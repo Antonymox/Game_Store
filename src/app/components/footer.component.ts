@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component } from "@angular/core"
+import { RouterLink } from "@angular/router"
 
 @Component({
-  selector: 'app-footer',
+  selector: "app-footer",
   standalone: true,
   imports: [RouterLink],
   template: `
@@ -36,7 +36,7 @@ import { RouterLink } from '@angular/router';
           
           <div class="footer-section">
             <h3>Contacto</h3>
-            <p>Email: info@gamestore.com</p>
+            <p>Email: info&#64;gamestore.com</p>
             <p>Teléfono: +1 234 567 890</p>
             <div class="social-icons">
               <a href="#" class="social-icon">
@@ -64,7 +64,8 @@ import { RouterLink } from '@angular/router';
       </div>
     </footer>
   `,
-  styles: [`
+  styles: [
+    `
     .footer {
       background-color: #1a1a2e;
       color: #f5f5f5;
@@ -166,6 +167,7 @@ import { RouterLink } from '@angular/router';
         margin-bottom: 30px;
       }
     }
-  `]
+  `,
+  ],
 })
 export class FooterComponent {}
