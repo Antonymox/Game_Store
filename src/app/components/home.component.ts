@@ -1,7 +1,7 @@
 import { Component, type OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { RouterLink } from "@angular/router"
-import { GameService } from "../services/game.service"
+import  { GameService } from "../services/game.service"
 import type { Game } from "../models/game.model"
 import { GameCardComponent } from "./game-card.component"
 
@@ -112,28 +112,58 @@ import { GameCardComponent } from "./game-card.component"
       padding: 120px 20px;
       text-align: center;
       margin-bottom: 40px;
-      border-radius: 8px;
+      border-radius: 0;
       min-height: 500px;
       display: flex;
       align-items: center;
       justify-content: center;
+      border: 3px solid var(--border-color);
+      box-shadow: 0 0 0 3px var(--accent-color);
+      position: relative;
+    }
+    
+    .hero::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1),
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
     }
     
     .hero-content {
       max-width: 800px;
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
     
     .hero h1 {
       font-size: 2.5rem;
       margin-bottom: 20px;
       font-weight: 700;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      color: var(--text-primary);
+      text-shadow: 4px 4px 0 rgba(0,0,0,0.8);
+      letter-spacing: -1px;
     }
     
     .hero p {
       font-size: 1.2rem;
       margin-bottom: 30px;
       opacity: 0.9;
+      color: var(--text-secondary);
+      font-family: var(--retro-font);
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.8);
     }
     
     .hero-buttons {
@@ -144,32 +174,39 @@ import { GameCardComponent } from "./game-card.component"
     
     .btn {
       padding: 12px 24px;
-      border-radius: 4px;
+      border-radius: 0;
       font-weight: 600;
       text-decoration: none;
       transition: all 0.3s;
       display: inline-block;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      border: 3px solid var(--border-color);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
     }
     
     .btn-primary {
-      background-color: #e94560;
+      background-color: var(--accent-color);
       color: white;
     }
     
     .btn-primary:hover {
-      background-color: #d63553;
-      transform: translateY(-2px);
+      background-color: var(--accent-hover);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
     }
     
     .btn-secondary {
       background-color: transparent;
       color: white;
-      border: 2px solid white;
+      border: 3px solid var(--border-color);
     }
     
     .btn-secondary:hover {
       background-color: rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
     }
     
     /* Sections */
@@ -182,34 +219,39 @@ import { GameCardComponent } from "./game-card.component"
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+      border-bottom: 3px solid var(--border-color);
+      padding-bottom: 10px;
     }
     
     .section-header h2 {
       font-size: 1.8rem;
       color: var(--heading-color);
       position: relative;
-    }
-    
-    .section-header h2::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      left: 0;
-      width: 50px;
-      height: 3px;
-      background-color: #e94560;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      margin: 0;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.5);
     }
     
     .view-all {
-      color: #e94560;
+      color: var(--accent-color);
       text-decoration: none;
       font-weight: 500;
       transition: all 0.3s;
+      font-family: var(--pixel-font);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      border: 2px solid var(--border-color);
+      padding: 5px 10px;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
     }
     
     .view-all:hover {
-      color: #d63553;
-      text-decoration: underline;
+      color: var(--accent-hover);
+      text-decoration: none;
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+      text-shadow: 0 0 5px var(--accent-color);
     }
     
     /* Games Grid */
@@ -228,13 +270,16 @@ import { GameCardComponent } from "./game-card.component"
     }
     
     .category-card {
-      border-radius: 8px;
+      border-radius: 0;
       overflow: hidden;
       transition: transform 0.3s;
+      border: 3px solid var(--border-color);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
     }
     
     .category-card:hover {
-      transform: translateY(-5px);
+      transform: translate(-4px, -4px) rotate(2deg);
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.5);
     }
     
     .category-image {
@@ -262,31 +307,63 @@ import { GameCardComponent } from "./game-card.component"
       position: relative;
       z-index: 1;
       text-align: center;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.8);
     }
     
     /* Newsletter */
     .newsletter {
-      background-color: #1a1a2e;
+      background-color: var(--bg-tertiary);
       color: white;
       padding: 60px 20px;
-      border-radius: 8px;
+      border-radius: 0;
       margin-bottom: 40px;
+      border: 3px solid var(--border-color);
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+    
+    .newsletter::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.1),
+        rgba(0, 0, 0, 0.1) 10px,
+        transparent 10px,
+        transparent 20px
+      );
+      pointer-events: none;
     }
     
     .newsletter-content {
       max-width: 600px;
       margin: 0 auto;
       text-align: center;
+      position: relative;
+      z-index: 1;
     }
     
     .newsletter h2 {
       font-size: 1.8rem;
       margin-bottom: 15px;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      color: var(--text-primary);
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.5);
     }
     
     .newsletter p {
       margin-bottom: 25px;
       opacity: 0.9;
+      color: var(--text-secondary);
+      font-family: var(--retro-font);
+      font-size: 1.2rem;
     }
     
     .newsletter-form {
@@ -297,9 +374,12 @@ import { GameCardComponent } from "./game-card.component"
     .newsletter-form input {
       flex: 1;
       padding: 12px 15px;
-      border: none;
-      border-radius: 4px;
+      border: 3px solid var(--border-color);
+      border-radius: 0;
       font-size: 1rem;
+      background-color: var(--input-bg);
+      color: var(--text-primary);
+      font-family: var(--retro-font);
     }
     
     @media (max-width: 768px) {

@@ -1,11 +1,11 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { Game } from '../models/game.model';
-import { CartService } from '../services/cart.service';
+import { Component, Input } from "@angular/core"
+import { CommonModule } from "@angular/common"
+import { RouterLink } from "@angular/router"
+import type { Game } from "../models/game.model"
+import { CartService } from "../services/cart.service"
 
 @Component({
-  selector: 'app-game-card',
+  selector: "app-game-card",
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
@@ -59,24 +59,28 @@ import { CartService } from '../services/cart.service';
       </div>
     </div>
   `,
-  styles: [`
+  styles: [
+    `
     .game-card {
-      background-color: white;
-      border-radius: 8px;
+      background-color: var(--bg-secondary);
+      border-radius: 0;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
       transition: transform 0.3s, box-shadow 0.3s;
+      border: 3px solid var(--border-color);
+      position: relative;
     }
     
     .game-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+      transform: translate(-4px, -4px) rotate(1deg);
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
     }
     
     .game-image {
       position: relative;
       height: 180px;
       overflow: hidden;
+      border-bottom: 3px solid var(--border-color);
     }
     
     .game-image img {
@@ -84,6 +88,7 @@ import { CartService } from '../services/cart.service';
       height: 100%;
       object-fit: cover;
       transition: transform 0.5s;
+      image-rendering: pixelated;
     }
     
     .game-image:hover img {
@@ -110,22 +115,31 @@ import { CartService } from '../services/cart.service';
     
     .view-details {
       color: white;
-      background-color: #e94560;
+      background-color: var(--accent-color);
       padding: 8px 15px;
-      border-radius: 4px;
+      border-radius: 0;
       font-weight: 500;
+      border: 2px solid var(--border-color);
+      font-family: var(--pixel-font);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
     }
     
     .game-badge {
       position: absolute;
       top: 10px;
       right: 10px;
-      background-color: #e94560;
+      background-color: var(--accent-color);
       color: white;
       padding: 5px 10px;
-      border-radius: 4px;
+      border-radius: 0;
       font-weight: 600;
       font-size: 0.9rem;
+      border: 2px solid var(--border-color);
+      font-family: var(--pixel-font);
+      transform: rotate(5deg);
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
     }
     
     .game-info {
@@ -133,9 +147,11 @@ import { CartService } from '../services/cart.service';
     }
     
     .game-category {
-      color: #666;
-      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
       margin-bottom: 5px;
+      font-family: var(--retro-font);
+      text-transform: uppercase;
     }
     
     .game-title {
@@ -145,13 +161,18 @@ import { CartService } from '../services/cart.service';
     }
     
     .game-title a {
-      color: #1a1a2e;
+      color: var(--heading-color);
       text-decoration: none;
       transition: color 0.3s;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
     }
     
     .game-title a:hover {
-      color: #e94560;
+      color: var(--accent-color);
+      text-shadow: 0 0 5px var(--accent-color);
     }
     
     .game-rating {
@@ -171,8 +192,9 @@ import { CartService } from '../services/cart.service';
     }
     
     .rating-value {
-      color: #666;
+      color: var(--text-secondary);
       font-size: 0.9rem;
+      font-family: var(--retro-font);
     }
     
     .game-price {
@@ -187,70 +209,77 @@ import { CartService } from '../services/cart.service';
     }
     
     .original-price {
-      color: #999;
+      color: var(--text-tertiary);
       text-decoration: line-through;
       font-size: 0.8rem;
+      font-family: var(--retro-font);
     }
     
     .current-price {
-      color: #e94560;
+      color: var(--accent-color);
       font-weight: 700;
       font-size: 1.1rem;
+      font-family: var(--pixel-font);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
     }
     
     .add-to-cart {
-      background-color: #1a1a2e;
+      background-color: var(--bg-tertiary);
       color: white;
-      border: none;
-      border-radius: 4px;
+      border: 2px solid var(--border-color);
+      border-radius: 0;
       width: 36px;
       height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
     }
     
     .add-to-cart:hover {
-      background-color: #e94560;
+      background-color: var(--accent-color);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
     }
-  `]
+  `,
+  ],
 })
 export class GameCardComponent {
-  @Input() game!: Game;
-  
+  @Input() game!: Game
+
   constructor(private cartService: CartService) {}
-  
+
   getStars(rating: number): number[] {
-    const stars: number[] = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    
+    const stars: number[] = []
+    const fullStars = Math.floor(rating)
+    const hasHalfStar = rating % 1 >= 0.5
+
     // Agregar estrellas completas
     for (let i = 0; i < fullStars; i++) {
-      stars.push(1);
+      stars.push(1)
     }
-    
+
     // Agregar media estrella si es necesario
     if (hasHalfStar) {
-      stars.push(0.5);
+      stars.push(0.5)
     }
-    
+
     // Completar con estrellas vacías hasta llegar a 5
-    const emptyStars = 5 - stars.length;
+    const emptyStars = 5 - stars.length
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(0);
+      stars.push(0)
     }
-    
-    return stars;
+
+    return stars
   }
-  
+
   getCurrentPrice(game: Game): number {
-    return game.discount ? game.price * (1 - game.discount) : game.price;
+    return game.discount ? game.price * (1 - game.discount) : game.price
   }
-  
+
   addToCart(game: Game): void {
-    this.cartService.addToCart(game);
+    this.cartService.addToCart(game)
   }
 }

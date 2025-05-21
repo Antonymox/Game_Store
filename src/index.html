@@ -2,41 +2,73 @@
 <html lang="en" class="light-theme">
 <head>
   <meta charset="utf-8">
-  <title>GameStore</title>
+  <title>GameStore Retro</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
   
   <!-- Estilos inline para asegurar que el tema se aplique correctamente -->
   <style>
-    /* Estilos base para tema claro */
+    /* Estilos base para tema retro claro */
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'VT323', monospace;
       margin: 0;
       padding: 0;
-      background-color: #f5f5f7;
-      color: #1a1a2e;
+      background-color: #000033;
+      color: #ffcc00;
       transition: background-color 0.3s ease, color 0.3s ease;
+      text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+      background-image: 
+        linear-gradient(rgba(0, 0, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 255, 0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
     }
     
-    /* Estilos para tema oscuro */
+    /* Estilos para tema retro oscuro */
     html.dark-theme,
     body.dark-theme {
-      background-color: #121212;
-      color: #f5f5f7;
+      background-color: #220033;
+      color: #00ff99;
+      background-image: 
+        linear-gradient(rgba(255, 0, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 255, 0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
     }
     
-    /* Estilos para tema claro */
+    /* Estilos para tema retro claro */
     html.light-theme,
     body.light-theme {
-      background-color: #f5f5f7;
-      color: #1a1a2e;
+      background-color: #000033;
+      color: #ffcc00;
+      background-image: 
+        linear-gradient(rgba(0, 0, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 255, 0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    
+    /* Efecto scanline */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      z-index: 9999;
     }
     
     /* Estilos de texto para modo oscuro */
     body.dark-theme p {
-      color: #b0b0b0;
+      color: #ff00ff;
     }
     
     body.dark-theme h1,
@@ -45,16 +77,18 @@
     body.dark-theme h4,
     body.dark-theme h5,
     body.dark-theme h6 {
-      color: #ffffff;
+      color: #00ffaa;
+      font-family: 'Press Start 2P', cursive;
+      text-transform: uppercase;
     }
     
     body.dark-theme a:not(.btn) {
-      color: #ff6b8b;
+      color: #ff00ff;
     }
     
     /* Estilos de texto para modo claro */
     body.light-theme p {
-      color: #fdfdfd;
+      color: #00ffff;
     }
     
     body.light-theme h1,
@@ -63,11 +97,13 @@
     body.light-theme h4,
     body.light-theme h5,
     body.light-theme h6 {
-      color: #ffffff;
+      color: #00ffff;
+      font-family: 'Press Start 2P', cursive;
+      text-transform: uppercase;
     }
     
     body.light-theme a:not(.btn) {
-      color: #e94560;
+      color: #ff00ff;
     }
   </style>
 </head>
@@ -76,8 +112,8 @@
   
   <!-- Botón de depuración para cambiar tema manualmente -->
   <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-    <button onclick="toggleThemeManually()" style="padding: 10px; background: #e94560; color: white; border: none; border-radius: 4px; cursor: pointer;">
-      Cambiar Tema Manualmente
+    <button onclick="toggleThemeManually()" style="padding: 10px; background: #ff0099; color: white; border: 3px solid #00ff00; border-radius: 0; cursor: pointer; font-family: 'Press Start 2P', cursive; font-size: 10px; text-transform: uppercase; box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);">
+      Cambiar Tema
     </button>
   </div>
   
@@ -98,8 +134,9 @@
         body.classList.add('dark-theme');
         
         // Aplicar estilos directamente
-        body.style.backgroundColor = '#121212';
-        body.style.color = '#f5f5f7';
+        body.style.backgroundColor = '#220033';
+        body.style.color = '#00ff99';
+        body.style.backgroundImage = 'linear-gradient(rgba(255, 0, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 0, 255, 0.05) 1px, transparent 1px)';
       } else {
         html.classList.remove('dark-theme');
         html.classList.add('light-theme');
@@ -107,8 +144,9 @@
         body.classList.add('light-theme');
         
         // Aplicar estilos directamente
-        body.style.backgroundColor = '#f5f5f7';
-        body.style.color = '#1a1a2e';
+        body.style.backgroundColor = '#000033';
+        body.style.color = '#ffcc00';
+        body.style.backgroundImage = 'linear-gradient(rgba(0, 0, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 255, 0.05) 1px, transparent 1px)';
       }
       
       localStorage.setItem('theme', newTheme);
@@ -134,9 +172,11 @@
       const header = document.querySelector('header');
       if (header) {
         if (theme === 'dark') {
-          header.style.backgroundColor = '#0f0f1a';
+          header.style.backgroundColor = '#330066';
+          header.style.borderBottom = '3px solid #00ffaa';
         } else {
-          header.style.backgroundColor = '#1a1a2e';
+          header.style.backgroundColor = '#000088';
+          header.style.borderBottom = '3px solid #00ff00';
         }
       }
       
@@ -144,9 +184,11 @@
       const footer = document.querySelector('footer');
       if (footer) {
         if (theme === 'dark') {
-          footer.style.backgroundColor = '#0f0f1a';
+          footer.style.backgroundColor = '#330066';
+          footer.style.borderTop = '3px solid #00ffaa';
         } else {
-          footer.style.backgroundColor = '#1a1a2e';
+          footer.style.backgroundColor = '#000088';
+          footer.style.borderTop = '3px solid #00ff00';
         }
       }
       
@@ -154,13 +196,15 @@
       const gameCards = document.querySelectorAll('.game-card');
       gameCards.forEach(card => {
         if (theme === 'dark') {
-          card.style.backgroundColor = '#1e1e1e';
-          card.style.color = '#f5f5f7';
-          card.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.3)';
+          card.style.backgroundColor = '#440066';
+          card.style.color = '#00ff99';
+          card.style.border = '3px solid #00ffaa';
+          card.style.boxShadow = '0 0 0 4px #ff00ff, 0 0 0 8px #330066';
         } else {
-          card.style.backgroundColor = 'white';
-          card.style.color = '#1a1a2e';
-          card.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
+          card.style.backgroundColor = '#0000aa';
+          card.style.color = '#ffcc00';
+          card.style.border = '3px solid #00ff00';
+          card.style.boxShadow = '0 0 0 4px #00ffff, 0 0 0 8px #000088';
         }
       });
       
@@ -168,13 +212,13 @@
       const inputs = document.querySelectorAll('input, select, textarea');
       inputs.forEach(input => {
         if (theme === 'dark') {
-          input.style.backgroundColor = '#2d2d2d';
-          input.style.color = '#f5f5f7';
-          input.style.borderColor = '#444444';
+          input.style.backgroundColor = '#220044';
+          input.style.color = '#00ff99';
+          input.style.borderColor = '#00ffaa';
         } else {
-          input.style.backgroundColor = 'white';
-          input.style.color = '#1a1a2e';
-          input.style.borderColor = '#dddddd';
+          input.style.backgroundColor = '#000055';
+          input.style.color = '#ffcc00';
+          input.style.borderColor = '#00ff00';
         }
       });
       
@@ -185,16 +229,16 @@
     // Aplicar estilos a textos
     function applyTextStyles(theme) {
       // Colores para modo oscuro
-      const darkTextPrimary = '#f5f5f7';
-      const darkTextSecondary = '#b0b0b0';
-      const darkLinkColor = '#ff6b8b';
-      const darkHeadingColor = '#ffffff';
+      const darkTextPrimary = '#00ff99';
+      const darkTextSecondary = '#ff00ff';
+      const darkLinkColor = '#ff00ff';
+      const darkHeadingColor = '#00ffaa';
       
       // Colores para modo claro
-      const lightTextPrimary = '#1a1a2e';
-      const lightTextSecondary = '#666666';
-      const lightLinkColor = '#e94560';
-      const lightHeadingColor = '#1a1a2e';
+      const lightTextPrimary = '#ffcc00';
+      const lightTextSecondary = '#00ffff';
+      const lightLinkColor = '#ff00ff';
+      const lightHeadingColor = '#00ffff';
       
       // Aplicar estilos a párrafos
       const paragraphs = document.querySelectorAll('p');
@@ -214,6 +258,8 @@
         } else {
           heading.style.color = lightHeadingColor;
         }
+        heading.style.fontFamily = "'Press Start 2P', cursive";
+        heading.style.textTransform = "uppercase";
       });
       
       // Aplicar estilos a enlaces
@@ -257,8 +303,9 @@
         body.classList.add('dark-theme');
         
         // Aplicar estilos directamente
-        body.style.backgroundColor = '#121212';
-        body.style.color = '#f5f5f7';
+        body.style.backgroundColor = '#220033';
+        body.style.color = '#00ff99';
+        body.style.backgroundImage = 'linear-gradient(rgba(255, 0, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 0, 255, 0.05) 1px, transparent 1px)';
         
         // Aplicar estilos a componentes
         setTimeout(() => {

@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterLink, Router } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { AuthService } from "../services/auth.service";
 
 @Component({
-  selector: 'app-login',
+  selector: "app-login",
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
   template: `
@@ -86,7 +86,8 @@ import { AuthService } from '../services/auth.service';
       </div>
     </div>
   `,
-  styles: [`
+  styles: [
+    `
     .login-container {
       display: flex;
       justify-content: center;
@@ -96,65 +97,104 @@ import { AuthService } from '../services/auth.service';
     }
     
     .login-card {
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      background-color: var(--bg-secondary);
+      border-radius: 0;
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
       width: 100%;
       max-width: 450px;
       padding: 30px;
+      border: 3px solid var(--border-color);
+      position: relative;
+    }
+    
+    .login-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.05),
+        rgba(0, 0, 0, 0.05) 10px,
+        transparent 10px,
+        transparent 20px
+      );
+      pointer-events: none;
+      z-index: 0;
     }
     
     .login-header {
       text-align: center;
       margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
     }
     
     .login-header h2 {
-      color: #1a1a2e;
+      color: var(--heading-color);
       margin-bottom: 10px;
       font-size: 1.8rem;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.5);
     }
     
     .login-header p {
-      color: #666;
+      color: var(--text-secondary);
+      font-family: var(--retro-font);
+      font-size: 1.2rem;
     }
     
     .alert {
       padding: 12px;
-      border-radius: 4px;
+      border-radius: 0;
       margin-bottom: 20px;
+      border: 2px solid var(--border-color);
+      position: relative;
+      z-index: 1;
     }
     
     .alert-danger {
       background-color: #f8d7da;
       color: #721c24;
-      border: 1px solid #f5c6cb;
+      border: 2px solid #f5c6cb;
     }
     
     .form-group {
       margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
     }
     
     label {
       display: block;
       margin-bottom: 8px;
-      color: #333;
+      color: var(--text-primary);
       font-weight: 500;
+      font-family: var(--pixel-font);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
     }
     
     input[type="text"],
     input[type="password"] {
       width: 100%;
       padding: 12px 15px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      border: 3px solid var(--border-color);
+      border-radius: 0;
       font-size: 1rem;
       transition: border-color 0.3s;
+      background-color: var(--input-bg);
+      color: var(--text-primary);
+      font-family: var(--retro-font);
     }
     
     input:focus {
       outline: none;
-      border-color: #e94560;
+      box-shadow: 0 0 0 3px var(--accent-color);
     }
     
     .is-invalid {
@@ -165,6 +205,7 @@ import { AuthService } from '../services/auth.service';
       color: #dc3545;
       font-size: 0.85rem;
       margin-top: 5px;
+      font-family: var(--retro-font);
     }
     
     .password-input {
@@ -178,8 +219,13 @@ import { AuthService } from '../services/auth.service';
       transform: translateY(-50%);
       background: none;
       border: none;
-      color: #666;
+      color: var(--text-secondary);
       cursor: pointer;
+      box-shadow: none;
+    }
+    
+    .toggle-password:hover {
+      color: var(--accent-color);
     }
     
     .form-options {
@@ -187,6 +233,8 @@ import { AuthService } from '../services/auth.service';
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
     }
     
     .remember-me {
@@ -199,51 +247,67 @@ import { AuthService } from '../services/auth.service';
     }
     
     .forgot-password {
-      color: #e94560;
+      color: var(--accent-color);
       text-decoration: none;
       font-size: 0.9rem;
+      font-family: var(--retro-font);
     }
     
     .forgot-password:hover {
       text-decoration: underline;
+      text-shadow: 0 0 5px var(--accent-color);
     }
     
     .btn-login {
       width: 100%;
       padding: 12px;
-      background-color: #e94560;
+      background-color: var(--accent-color);
       color: white;
-      border: none;
-      border-radius: 4px;
+      border: 3px solid var(--border-color);
+      border-radius: 0;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 1;
     }
     
     .btn-login:hover {
-      background-color: #d63553;
+      background-color: var(--accent-hover);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
     }
     
     .btn-login:disabled {
       background-color: #e9798e;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
     }
     
     .login-footer {
       text-align: center;
       margin-top: 25px;
-      color: #666;
+      color: var(--text-secondary);
+      position: relative;
+      z-index: 1;
+      font-family: var(--retro-font);
+      font-size: 1.1rem;
     }
     
     .login-footer a {
-      color: #e94560;
+      color: var(--accent-color);
       text-decoration: none;
       font-weight: 500;
     }
     
     .login-footer a:hover {
       text-decoration: underline;
+      text-shadow: 0 0 5px var(--accent-color);
     }
     
     @media (max-width: 480px) {
@@ -256,47 +320,47 @@ import { AuthService } from '../services/auth.service';
         margin-top: 10px;
       }
     }
-  `]
+    `
+  ]
 })
 export class LoginComponent {
   loginData = {
-    username: '',
-    password: '',
+    username: "",
+    password: "",
     remember: false
   };
-  
+
   isLoading = false;
-  errorMessage = '';
+  errorMessage = "";
   showPassword = false;
-  
+
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
-  
+
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
-  
+
   onSubmit(): void {
     this.isLoading = true;
-    this.errorMessage = '';
-    
-    this.authService.login(this.loginData.username, this.loginData.password)
-      .subscribe({
-        next: (user) => {
-          this.isLoading = false;
-          if (user) {
-            this.router.navigate(['/home']);
-          } else {
-            this.errorMessage = 'Usuario o contraseña incorrectos';
-          }
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.errorMessage = 'Ocurrió un error al iniciar sesión. Inténtalo de nuevo.';
-          console.error('Error de inicio de sesión:', error);
+    this.errorMessage = "";
+
+    this.authService.login(this.loginData.username, this.loginData.password).subscribe({
+      next: (user) => {
+        this.isLoading = false;
+        if (user) {
+          this.router.navigate(["/home"]);
+        } else {
+          this.errorMessage = "Usuario o contraseña incorrectos";
         }
-      });
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = "Ocurrió un error al iniciar sesión. Inténtalo de nuevo.";
+        console.error("Error de inicio de sesión:", error);
+      }
+    });
   }
 }

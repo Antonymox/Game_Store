@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, ActivatedRoute } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { GameService } from '../services/game.service';
-import { Game } from '../models/game.model';
-import { GameCardComponent } from './game-card.component';
+import { Component, type OnInit } from "@angular/core"
+import { CommonModule } from "@angular/common"
+import { RouterLink, ActivatedRoute } from "@angular/router";
+import { FormsModule } from "@angular/forms"
+import { GameService } from "../services/game.service"
+import type { Game } from "../models/game.model"
+import { GameCardComponent } from "./game-card.component"
 
 @Component({
-  selector: 'app-games',
+  selector: "app-games",
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule, GameCardComponent],
   template: `
@@ -128,24 +128,31 @@ import { GameCardComponent } from './game-card.component';
       </div>
     </div>
   `,
-  styles: [`
+  styles: [
+    `
     .games-container {
       padding: 20px 0;
     }
     
     .games-header {
       margin-bottom: 30px;
+      border-bottom: 3px solid var(--border-color);
+      padding-bottom: 10px;
     }
     
     .games-header h1 {
       font-size: 2rem;
-      color: #1a1a2e;
+      color: var(--heading-color);
       margin-bottom: 10px;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.5);
     }
     
     .games-header p {
-      color: #666;
+      color: var(--text-secondary);
       font-size: 1.1rem;
+      font-family: var(--retro-font);
     }
     
     .games-content {
@@ -156,11 +163,12 @@ import { GameCardComponent } from './game-card.component';
     
     /* Filters Sidebar */
     .filters-sidebar {
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      background-color: var(--bg-secondary);
+      border-radius: 0;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
       padding: 20px;
       height: fit-content;
+      border: 3px solid var(--border-color);
     }
     
     .filter-section {
@@ -169,10 +177,13 @@ import { GameCardComponent } from './game-card.component';
     
     .filter-section h3 {
       font-size: 1.1rem;
-      color: #1a1a2e;
+      color: var(--heading-color);
       margin-bottom: 15px;
       padding-bottom: 8px;
-      border-bottom: 1px solid #eee;
+      border-bottom: 2px solid var(--border-color);
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
     }
     
     .category-list {
@@ -186,15 +197,19 @@ import { GameCardComponent } from './game-card.component';
     }
     
     .category-list a {
-      color: #666;
+      color: var(--text-secondary);
       text-decoration: none;
       transition: color 0.3s;
       display: block;
       padding: 5px 0;
+      font-family: var(--retro-font);
+      font-size: 1.1rem;
     }
     
     .category-list a:hover, .category-list a.active {
-      color: #e94560;
+      color: var(--accent-color);
+      text-shadow: 0 0 5px var(--accent-color);
+      transform: translateX(5px);
     }
     
     .price-range {
@@ -204,12 +219,29 @@ import { GameCardComponent } from './game-card.component';
     .price-range input {
       width: 100%;
       margin-bottom: 10px;
+      -webkit-appearance: none;
+      height: 10px;
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-color);
+      border-radius: 0;
+    }
+    
+    .price-range input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--accent-color);
+      cursor: pointer;
+      border: 2px solid var(--border-color);
+      border-radius: 0;
     }
     
     .price-values {
       display: flex;
       justify-content: space-between;
-      color: #666;
+      color: var(--text-secondary);
+      font-family: var(--retro-font);
     }
     
     .checkbox-filter {
@@ -219,30 +251,74 @@ import { GameCardComponent } from './game-card.component';
     
     .checkbox-filter input {
       margin-right: 10px;
+      width: 20px;
+      height: 20px;
+      -webkit-appearance: none;
+      appearance: none;
+      background-color: var(--bg-tertiary);
+      border: 2px solid var(--border-color);
+      border-radius: 0;
+      cursor: pointer;
+    }
+    
+    .checkbox-filter input:checked {
+      background-color: var(--accent-color);
+      position: relative;
+    }
+    
+    .checkbox-filter input:checked::after {
+      content: "✓";
+      position: absolute;
+      color: white;
+      font-size: 14px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .checkbox-filter label {
+      color: var(--text-secondary);
+      font-family: var(--retro-font);
+      font-size: 1.1rem;
     }
     
     select {
       width: 100%;
       padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      background-color: white;
-      color: #333;
+      border: 3px solid var(--border-color);
+      border-radius: 0;
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-family: var(--retro-font);
+      font-size: 1.1rem;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 1em;
     }
     
     .btn-clear-filters {
       width: 100%;
       padding: 10px;
-      background-color: #f8f9fa;
-      color: #333;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 3px solid var(--border-color);
+      border-radius: 0;
       cursor: pointer;
       transition: all 0.3s;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
     }
     
     .btn-clear-filters:hover {
-      background-color: #e9ecef;
+      background-color: var(--accent-color);
+      color: white;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
     }
     
     /* Games Grid */
@@ -259,9 +335,12 @@ import { GameCardComponent } from './game-card.component';
     .search-bar input {
       width: 100%;
       padding: 12px 40px 12px 15px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      border: 3px solid var(--border-color);
+      border-radius: 0;
       font-size: 1rem;
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-family: var(--retro-font);
     }
     
     .search-bar button {
@@ -271,13 +350,22 @@ import { GameCardComponent } from './game-card.component';
       transform: translateY(-50%);
       background: none;
       border: none;
-      color: #666;
+      color: var(--text-secondary);
       cursor: pointer;
+      box-shadow: none;
+    }
+    
+    .search-bar button:hover {
+      color: var(--accent-color);
     }
     
     .results-info {
       margin-bottom: 20px;
-      color: #666;
+      color: var(--text-secondary);
+      font-family: var(--retro-font);
+      font-size: 1.1rem;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 10px;
     }
     
     .games-list {
@@ -289,37 +377,51 @@ import { GameCardComponent } from './game-card.component';
     .no-results {
       text-align: center;
       padding: 40px 0;
-      color: #666;
+      color: var(--text-secondary);
+      background-color: var(--bg-secondary);
+      border: 3px solid var(--border-color);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
     }
     
     .no-results svg {
-      color: #e94560;
+      color: var(--accent-color);
       margin-bottom: 15px;
     }
     
     .no-results h3 {
       font-size: 1.3rem;
       margin-bottom: 10px;
-      color: #1a1a2e;
+      color: var(--heading-color);
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
     }
     
     .no-results p {
       margin-bottom: 20px;
+      font-family: var(--retro-font);
+      font-size: 1.1rem;
     }
     
     .btn-primary {
-      background-color: #e94560;
+      background-color: var(--accent-color);
       color: white;
       padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
+      border: 3px solid var(--border-color);
+      border-radius: 0;
       cursor: pointer;
       font-weight: 500;
-      transition: background-color 0.3s;
+      transition: all 0.3s;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
     }
     
     .btn-primary:hover {
-      background-color: #d63553;
+      background-color: var(--accent-hover);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
     }
     
     @media (max-width: 992px) {
@@ -337,120 +439,120 @@ import { GameCardComponent } from './game-card.component';
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       }
     }
-  `]
+  `,
+  ],
 })
 export class GamesComponent implements OnInit {
-  allGames: Game[] = [];
-  filteredGames: Game[] = [];
-  categories: string[] = [];
-  
+  allGames: Game[] = []
+  filteredGames: Game[] = []
+  categories: string[] = []
+
   // Filtros
-  selectedCategory: string = '';
-  priceFilter: number = 100;
-  showDiscounted: boolean = false;
-  sortBy: string = 'relevance';
-  searchTerm: string = '';
-  
+  selectedCategory = ""
+  priceFilter = 100
+  showDiscounted = false
+  sortBy = "relevance"
+  searchTerm = ""
+
   constructor(
     private gameService: GameService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
-  
+
   ngOnInit(): void {
-    this.gameService.getGames().subscribe(games => {
-      this.allGames = games;
-      
+    this.gameService.getGames().subscribe((games) => {
+      this.allGames = games
+
       // Extraer categorías únicas
-      const categorySet = new Set<string>();
-      games.forEach(games => categorySet.add(games.category));
-      this.categories = Array.from(categorySet);
-      
+      const categorySet = new Set<string>()
+      games.forEach((games) => categorySet.add(games.category))
+      this.categories = Array.from(categorySet)
+
       // Obtener parámetros de la URL
-      this.route.queryParams.subscribe(params => {
-        if (params['category']) {
-          this.selectedCategory = params['category'];
+      this.route.queryParams.subscribe((params) => {
+        if (params["category"]) {
+          this.selectedCategory = params["category"]
         }
-        
-        if (params['discount'] === 'true') {
-          this.showDiscounted = true;
+
+        if (params["discount"] === "true") {
+          this.showDiscounted = true
         }
-        
-        if (params['sort']) {
-          this.sortBy = params['sort'];
+
+        if (params["sort"]) {
+          this.sortBy = params["sort"]
         }
-        
-        this.applyFilters();
-      });
-    });
+
+        this.applyFilters()
+      })
+    })
   }
-  
+
   applyFilters(): void {
     // Filtrar por categoría
-    let result = this.allGames;
-    
+    let result = this.allGames
+
     if (this.selectedCategory) {
-      result = result.filter(game => game.category === this.selectedCategory);
+      result = result.filter((game) => game.category === this.selectedCategory)
     }
-    
+
     // Filtrar por precio
-    result = result.filter(game => {
-      const price = game.discount ? game.price * (1 - game.discount) : game.price;
-      return price <= this.priceFilter;
-    });
-    
+    result = result.filter((game) => {
+      const price = game.discount ? game.price * (1 - game.discount) : game.price
+      return price <= this.priceFilter
+    })
+
     // Filtrar por descuento
     if (this.showDiscounted) {
-      result = result.filter(game => game.discount);
+      result = result.filter((game) => game.discount)
     }
-    
+
     // Filtrar por término de búsqueda
     if (this.searchTerm.trim()) {
-      const term = this.searchTerm.toLowerCase();
-      result = result.filter(game => 
-        game.title.toLowerCase().includes(term) || 
-        game.description.toLowerCase().includes(term)
-      );
+      const term = this.searchTerm.toLowerCase()
+      result = result.filter(
+        (game) => game.title.toLowerCase().includes(term) || game.description.toLowerCase().includes(term),
+      )
     }
-    
+
     // Ordenar resultados
     switch (this.sortBy) {
-      case 'price-low':
+      case "price-low":
         result.sort((a, b) => {
-          const priceA = a.discount ? a.price * (1 - a.discount) : a.price;
-          const priceB = b.discount ? b.price * (1 - b.discount) : b.price;
-          return priceA - priceB;
-        });
-        break;
-      case 'price-high':
+          const priceA = a.discount ? a.price * (1 - a.discount) : a.price
+          const priceB = b.discount ? b.price * (1 - b.discount) : b.price
+          return priceA - priceB
+        })
+        break
+      case "price-high":
         result.sort((a, b) => {
-          const priceA = a.discount ? a.price * (1 - a.discount) : a.price;
-          const priceB = b.discount ? b.price * (1 - b.discount) : b.price;
-          return priceB - priceA;
-        });
-        break;
-      case 'name':
-        result.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case 'rating':
-        result.sort((a, b) => b.rating - a.rating);
-        break;
-      case 'newest':
-        result.sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime());
-        break;
+          const priceA = a.discount ? a.price * (1 - a.discount) : a.price
+          const priceB = b.discount ? b.price * (1 - b.discount) : b.price
+          return priceB - priceA
+        })
+        break
+      case "name":
+        result.sort((a, b) => a.title.localeCompare(b.title))
+        break
+      case "rating":
+        result.sort((a, b) => b.rating - a.rating)
+        break
+      case "newest":
+        result.sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())
+        break
       default:
         // Por defecto, ordenar por relevancia (rating)
-        result.sort((a, b) => b.rating - a.rating);
+        result.sort((a, b) => b.rating - a.rating)
     }
-    
-    this.filteredGames = result;
+
+    this.filteredGames = result
   }
-  
+
   clearFilters(): void {
-    this.selectedCategory = '';
-    this.priceFilter = 100;
-    this.showDiscounted = false;
-    this.sortBy = 'relevance';
-    this.searchTerm = '';
-    this.applyFilters();
+    this.selectedCategory = ""
+    this.priceFilter = 100
+    this.showDiscounted = false
+    this.sortBy = "relevance"
+    this.searchTerm = ""
+    this.applyFilters()
   }
 }

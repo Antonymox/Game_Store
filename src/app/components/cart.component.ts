@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { CartService } from '../services/cart.service';
-import { Cart, CartItem } from '../models/cart.model';
+import { Component, type OnInit } from "@angular/core"
+import { CommonModule } from "@angular/common"
+import { RouterLink } from "@angular/router"
+import { FormsModule } from "@angular/forms"
+import { CartService } from "../services/cart.service"
+import type { Cart } from "../models/cart.model"
 
 @Component({
-  selector: 'app-cart',
+  selector: "app-cart",
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
   template: `
@@ -129,47 +129,430 @@ import { Cart, CartItem } from '../models/cart.model';
       </div>
     </div>
   `,
-  styles: [`
-    /* Tus estilos aquí (sin cambios) */
-  `]
-})
-export class CartComponent implements OnInit {
-  cart: Cart = { items: [], totalItems: 0, totalPrice: 0 };
-  
-  constructor(private cartService: CartService) {}
-  
-  ngOnInit(): void {
-    this.cartService.cart$.subscribe(cart => {
-      this.cart = cart;
-    });
-  }
-  
-  getCurrentPrice(game: any): number {
-    return game.discount ? game.price * (1 - game.discount) : game.price;
-  }
-  
-  onQuantityChange(event: Event, gameId: number): void {
-    const input = event.target as HTMLInputElement;
-    const quantity = parseInt(input.value, 10);
-    this.updateQuantity(gameId, quantity);
-  }
-  
-  updateQuantity(gameId: number, quantity: number): void {
-    const parsedQuantity = parseInt(quantity.toString(), 10);
-    if (isNaN(parsedQuantity)) {
-      return;
+  styles: [
+    `
+    .cart-container {
+      padding: 20px;
     }
     
-    this.cartService.updateQuantity(gameId, Math.max(1, parsedQuantity));
+    .cart-title {
+      font-size: 2rem;
+      color: var(--heading-color);
+      margin-bottom: 20px;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+      border-bottom: 3px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+    
+    .cart-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 50px 20px;
+      background-color: var(--bg-secondary);
+      border: 3px solid var(--border-color);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+    
+    .empty-icon {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      font-size: 64px;
+    }
+    
+    .cart-empty h2 {
+      font-size: 1.5rem;
+      color: var(--heading-color);
+      margin-bottom: 10px;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+    }
+    
+    .cart-empty p {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      font-family: var(--retro-font);
+      font-size: 1.2rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 10px 20px;
+      border: 3px solid var(--border-color);
+      border-radius: 0;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+    }
+    
+    .cart-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .cart-items {
+      background-color: var(--bg-secondary);
+      border: 3px solid var(--border-color);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+    }
+    
+    .cart-header {
+      display: grid;
+      grid-template-columns: 3fr 1fr 1fr 1fr 0.5fr;
+      padding: 15px;
+      background-color: var(--bg-tertiary);
+      border-bottom: 3px solid var(--border-color);
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+    }
+    
+    .cart-item {
+      display: grid;
+      grid-template-columns: 3fr 1fr 1fr 1fr 0.5fr;
+      padding: 15px;
+      border-bottom: 2px solid var(--border-color);
+      align-items: center;
+    }
+    
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+    
+    .product-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .product-image {
+      width: 80px;
+      height: 80px;
+      border: 2px solid var(--border-color);
+      overflow: hidden;
+    }
+    
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      image-rendering: pixelated;
+    }
+    
+    .product-details h3 {
+      margin: 0 0 5px 0;
+      font-size: 1rem;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      letter-spacing: -1px;
+    }
+    
+    .product-details h3 a {
+      color: var(--heading-color);
+      text-decoration: none;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+    }
+    
+    .product-details h3 a:hover {
+      color: var(--accent-color);
+      text-shadow: 0 0 5px var(--accent-color);
+    }
+    
+    .product-category {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-family: var(--retro-font);
+    }
+    
+    .price-discount {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .original-price {
+      color: var(--text-tertiary);
+      text-decoration: line-through;
+      font-size: 0.8rem;
+      font-family: var(--retro-font);
+    }
+    
+    .discount-badge {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 2px 5px;
+      border-radius: 0;
+      font-size: 0.7rem;
+      display: inline-block;
+      margin-top: 2px;
+      border: 1px solid var(--border-color);
+      font-family: var(--pixel-font);
+    }
+    
+    .current-price {
+      color: var(--accent-color);
+      font-weight: 700;
+      font-size: 1rem;
+      font-family: var(--pixel-font);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+    }
+    
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      border: 2px solid var(--border-color);
+      width: fit-content;
+    }
+    
+    .quantity-btn {
+      background-color: var(--bg-tertiary);
+      border: none;
+      color: var(--text-primary);
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: none;
+    }
+    
+    .quantity-btn:hover {
+      background-color: var(--accent-color);
+      color: white;
+    }
+    
+    .quantity-control input {
+      width: 40px;
+      height: 30px;
+      text-align: center;
+      border: none;
+      border-left: 2px solid var(--border-color);
+      border-right: 2px solid var(--border-color);
+      background-color: var(--input-bg);
+      color: var(--text-primary);
+      font-family: var(--retro-font);
+    }
+    
+    .product-total {
+      color: var(--accent-color);
+      font-weight: 700;
+      font-size: 1rem;
+      font-family: var(--pixel-font);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+    }
+    
+    .remove-btn {
+      background-color: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      box-shadow: none;
+    }
+    
+    .remove-btn:hover {
+      color: var(--accent-color);
+    }
+    
+    .cart-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    
+    .btn-secondary {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      padding: 10px 20px;
+      border: 3px solid var(--border-color);
+      border-radius: 0;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    }
+    
+    .btn-secondary:hover {
+      background-color: var(--bg-secondary);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      color: var(--accent-color);
+      padding: 10px 20px;
+      border: 3px solid var(--border-color);
+      border-radius: 0;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    }
+    
+    .btn-outline:hover {
+      background-color: var(--accent-color);
+      color: white;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+    }
+    
+    .cart-summary {
+      background-color: var(--bg-tertiary);
+      border: 3px solid var(--border-color);
+      padding: 20px;
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+    }
+    
+    .cart-summary h2 {
+      font-size: 1.3rem;
+      color: var(--heading-color);
+      margin-bottom: 20px;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      font-family: var(--retro-font);
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+    }
+    
+    .summary-row.total {
+      border-top: 2px solid var(--border-color);
+      padding-top: 15px;
+      margin-top: 15px;
+      font-weight: 700;
+      font-family: var(--pixel-font);
+      color: var(--text-primary);
+      font-size: 1.2rem;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+    }
+    
+    .promo-code {
+      display: flex;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .promo-code input {
+      flex: 1;
+      padding: 10px 15px;
+      border: 3px solid var(--border-color);
+      border-right: none;
+      background-color: var(--input-bg);
+      color: var(--text-primary);
+      font-family: var(--retro-font);
+    }
+    
+    .btn-apply {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      padding: 10px 15px;
+      border: 3px solid var(--border-color);
+      cursor: pointer;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+    
+    .btn-apply:hover {
+      background-color: var(--accent-color);
+      color: white;
+    }
+    
+    .btn-checkout {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--accent-color);
+      color: white;
+      border: 3px solid var(--border-color);
+      border-radius: 0;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      font-size: 1rem;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+      margin-top: 20px;
+    }
+    
+    .btn-checkout:hover {
+      background-color: var(--accent-hover);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+    }
+  `,
+  ],
+})
+export class CartComponent implements OnInit {
+  cart: Cart = { items: [], totalItems: 0, totalPrice: 0 }
+
+  constructor(private cartService: CartService) {}
+
+  ngOnInit(): void {
+    this.cartService.cart$.subscribe((cart) => {
+      this.cart = cart
+    })
   }
-  
+
+  getCurrentPrice(game: any): number {
+    return game.discount ? game.price * (1 - game.discount) : game.price
+  }
+
+  onQuantityChange(event: Event, gameId: number): void {
+    const input = event.target as HTMLInputElement
+    const quantity = Number.parseInt(input.value, 10)
+    this.updateQuantity(gameId, quantity)
+  }
+
+  updateQuantity(gameId: number, quantity: number): void {
+    const parsedQuantity = Number.parseInt(quantity.toString(), 10)
+    if (isNaN(parsedQuantity)) {
+      return
+    }
+
+    this.cartService.updateQuantity(gameId, Math.max(1, parsedQuantity))
+  }
+
   removeItem(gameId: number): void {
-    this.cartService.removeFromCart(gameId);
+    this.cartService.removeFromCart(gameId)
   }
-  
+
   clearCart(): void {
-    if (confirm('¿Estás seguro de que deseas vaciar el carrito?')) {
-      this.cartService.clearCart();
+    if (confirm("¿Estás seguro de que deseas vaciar el carrito?")) {
+      this.cartService.clearCart()
     }
   }
 }
