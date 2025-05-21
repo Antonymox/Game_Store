@@ -67,9 +67,12 @@ import { RouterLink } from "@angular/router"
   styles: [
     `
     .footer {
-      background-color: #1a1a2e;
-      color: #f5f5f5;
+      background-color: var(--footer-bg);
+      color: var(--footer-text);
       padding: 40px 0 20px;
+      border-top: 3px solid var(--border-color);
+      position: relative;
+      z-index: 10;
     }
     
     .container {
@@ -93,15 +96,20 @@ import { RouterLink } from "@angular/router"
     }
     
     .footer-section h3 {
-      color: #e94560;
+      color: var(--accent-color);
       margin-bottom: 15px;
       font-size: 18px;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
     }
     
     .footer-section p {
       margin-bottom: 10px;
-      color: #b0b0b0;
+      color: var(--text-secondary);
       line-height: 1.5;
+      font-family: var(--retro-font);
+      font-size: 1.1rem;
     }
     
     .footer-section ul {
@@ -115,13 +123,16 @@ import { RouterLink } from "@angular/router"
     }
     
     .footer-section ul li a {
-      color: #b0b0b0;
+      color: var(--text-secondary);
       text-decoration: none;
       transition: color 0.3s;
+      font-family: var(--retro-font);
+      font-size: 1.1rem;
     }
     
     .footer-section ul li a:hover {
-      color: #e94560;
+      color: var(--accent-color);
+      text-shadow: 0 0 5px var(--accent-color);
     }
     
     .social-icons {
@@ -135,27 +146,31 @@ import { RouterLink } from "@angular/router"
       justify-content: center;
       width: 36px;
       height: 36px;
-      border-radius: 50%;
-      background-color: #16213e;
+      border-radius: 0;
+      background-color: var(--bg-tertiary);
       color: white;
       margin-right: 10px;
       transition: all 0.3s;
+      border: 2px solid var(--border-color);
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
     }
     
     .social-icon:hover {
-      background-color: #e94560;
-      transform: translateY(-3px);
+      background-color: var(--accent-color);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
     }
     
     .footer-bottom {
       text-align: center;
       padding-top: 20px;
-      border-top: 1px solid #16213e;
+      border-top: 2px solid var(--border-color);
     }
     
     .footer-bottom p {
-      color: #b0b0b0;
+      color: var(--text-secondary);
       font-size: 14px;
+      font-family: var(--retro-font);
     }
     
     @media (max-width: 768px) {

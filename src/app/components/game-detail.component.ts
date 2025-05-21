@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, ActivatedRoute, Router } from '@angular/router';
-import { GameService } from '../services/game.service';
-import { CartService } from '../services/cart.service';
-import { Game } from '../models/game.model';
+import { Component, type OnInit } from "@angular/core"
+import { CommonModule } from "@angular/common"
+import { RouterLink, ActivatedRoute, Router } from "@angular/router";
+import { GameService } from "../services/game.service"
+import { CartService } from "../services/cart.service"
+import { Game } from "../models/game.model"
 
 @Component({
-  selector: 'app-game-detail',
+  selector: "app-game-detail",
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
@@ -144,11 +144,15 @@ import { Game } from '../models/game.model';
       <p>Cargando detalles del juego...</p>
     </div>
   `,
-  styles: [`
+  styles: [
+    `
     .game-detail-container {
-      padding: 20px 40px;
+      padding: 20px;
       max-width: 1200px;
       margin: 0 auto;
+      background-color: var(--bg-secondary);
+      border: 3px solid var(--border-color);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
     }
     
     .game-detail-content {
@@ -169,16 +173,18 @@ import { Game } from '../models/game.model';
       width: 100%;
       height: 400px;
       margin-bottom: 15px;
-      border-radius: 8px;
+      border-radius: 0;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      background-color: #f5f5f5;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+      background-color: var(--bg-tertiary);
+      border: 3px solid var(--border-color);
     }
     
     .game-image {
       width: 100%;
       height: 100%;
       object-fit: contain;
+      image-rendering: pixelated;
     }
     
     /* Gallery Styles */
@@ -198,32 +204,33 @@ import { Game } from '../models/game.model';
     .gallery-item {
       width: 100px;
       height: 75px;
-      border-radius: 4px;
+      border-radius: 0;
       overflow: hidden;
       cursor: pointer;
       opacity: 0.7;
       transition: all 0.3s ease;
       flex-shrink: 0;
-      border: 2px solid transparent;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      border: 2px solid var(--border-color);
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
     }
     
     .gallery-item:hover {
       opacity: 0.9;
-      transform: translateY(-3px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
     }
     
     .gallery-item.active {
       opacity: 1;
-      border-color: #e94560;
-      transform: translateY(-2px);
+      border-color: var(--accent-color);
+      transform: translate(-2px, -2px);
     }
     
     .gallery-item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      image-rendering: pixelated;
     }
     
     /* Custom scrollbar */
@@ -232,34 +239,43 @@ import { Game } from '../models/game.model';
     }
     
     .gallery-container::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 3px;
+      background: var(--bg-tertiary);
+      border-radius: 0;
     }
     
     .gallery-container::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 3px;
+      background: var(--accent-color);
+      border-radius: 0;
+      border: 1px solid var(--border-color);
     }
     
     .gallery-container::-webkit-scrollbar-thumb:hover {
-      background: #a8a8a8;
+      background: var(--accent-hover);
     }
 
     /* Game Info */
     .game-header {
       margin-bottom: 25px;
+      border-bottom: 3px solid var(--border-color);
+      padding-bottom: 15px;
     }
     
     .game-category {
-      color: #666;
+      color: var(--text-secondary);
       font-size: 0.9rem;
       margin-bottom: 5px;
+      font-family: var(--retro-font);
+      text-transform: uppercase;
     }
     
     .game-title {
       font-size: 2rem;
-      color: #1a1a2e;
+      color: var(--heading-color);
       margin: 0 0 15px 0;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.5);
     }
     
     .game-meta {
@@ -269,13 +285,15 @@ import { Game } from '../models/game.model';
     }
     
     .meta-label {
-      color: #666;
+      color: var(--text-secondary);
       margin-right: 5px;
+      font-family: var(--retro-font);
     }
     
     .meta-value {
-      color: #1a1a2e;
+      color: var(--text-primary);
       font-weight: 500;
+      font-family: var(--retro-font);
     }
     
     .rating {
@@ -294,35 +312,46 @@ import { Game } from '../models/game.model';
     }
     
     .rating-value {
-      color: #1a1a2e;
+      color: var(--text-primary);
       font-weight: 500;
+      font-family: var(--retro-font);
     }
     
     /* Game Description */
     .game-description {
       margin-bottom: 30px;
+      border: 2px solid var(--border-color);
+      padding: 15px;
+      background-color: var(--bg-tertiary);
     }
     
     .game-description h2 {
       font-size: 1.3rem;
-      color: #1a1a2e;
+      color: var(--heading-color);
       margin-bottom: 15px;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
     }
     
     .game-description p {
-      color: #666;
+      color: var(--text-secondary);
       line-height: 1.6;
+      font-family: var(--retro-font);
+      font-size: 1.1rem;
     }
     
     /* Game Purchase */
     .game-purchase {
-      background-color: #f8f9fa;
-      border-radius: 8px;
+      background-color: var(--bg-tertiary);
+      border-radius: 0;
       padding: 20px;
       margin-bottom: 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border: 3px solid var(--border-color);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
     }
     
     .game-price {
@@ -331,25 +360,31 @@ import { Game } from '../models/game.model';
     }
     
     .original-price {
-      color: #999;
+      color: var(--text-tertiary);
       text-decoration: line-through;
       font-size: 1rem;
       margin-right: 10px;
+      font-family: var(--retro-font);
     }
     
     .current-price {
-      color: #1a1a2e;
+      color: var(--accent-color);
       font-size: 1.5rem;
       font-weight: 700;
+      font-family: var(--pixel-font);
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
     }
     
     .discount-badge {
-      background-color: #e94560;
+      background-color: var(--accent-color);
       color: white;
       padding: 3px 8px;
-      border-radius: 4px;
+      border-radius: 0;
       font-size: 0.9rem;
       margin-left: 10px;
+      border: 2px solid var(--border-color);
+      font-family: var(--pixel-font);
+      transform: rotate(5deg);
     }
     
     .purchase-actions {
@@ -359,23 +394,29 @@ import { Game } from '../models/game.model';
     
     .btn-add-cart, .btn-buy-now {
       padding: 10px 20px;
-      border-radius: 4px;
+      border-radius: 0;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      border: 3px solid var(--border-color);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
     }
     
     .btn-add-cart {
-      background-color: #1a1a2e;
-      color: white;
-      border: none;
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
     }
     
     .btn-add-cart:hover {
-      background-color: #16213e;
+      background-color: var(--bg-tertiary);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
     }
     
     .btn-add-cart svg {
@@ -383,24 +424,31 @@ import { Game } from '../models/game.model';
     }
     
     .btn-buy-now {
-      background-color: #e94560;
+      background-color: var(--accent-color);
       color: white;
-      border: none;
     }
     
     .btn-buy-now:hover {
-      background-color: #d63553;
+      background-color: var(--accent-hover);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
     }
     
     /* Game Details */
     .game-details {
       margin-bottom: 30px;
+      border: 2px solid var(--border-color);
+      padding: 15px;
+      background-color: var(--bg-tertiary);
     }
     
     .game-details h2 {
       font-size: 1.3rem;
-      color: #1a1a2e;
+      color: var(--heading-color);
       margin-bottom: 15px;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
     }
     
     .details-grid {
@@ -415,25 +463,34 @@ import { Game } from '../models/game.model';
     }
     
     .detail-label {
-      color: #666;
+      color: var(--text-secondary);
       font-size: 0.9rem;
       margin-bottom: 5px;
+      font-family: var(--retro-font);
+      text-transform: uppercase;
     }
     
     .detail-value {
-      color: #1a1a2e;
+      color: var(--text-primary);
       font-weight: 500;
+      font-family: var(--retro-font);
+      font-size: 1.1rem;
     }
     
     /* Related Games */
     .related-games {
       margin-top: 40px;
+      border-top: 3px solid var(--border-color);
+      padding-top: 20px;
     }
     
     .related-games h2 {
       font-size: 1.5rem;
-      color: #1a1a2e;
+      color: var(--heading-color);
       margin-bottom: 20px;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
     }
     
     .related-games-grid {
@@ -443,21 +500,24 @@ import { Game } from '../models/game.model';
     }
     
     .related-game-card {
-      background-color: white;
-      border-radius: 8px;
+      background-color: var(--bg-tertiary);
+      border-radius: 0;
       overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
       transition: transform 0.3s;
+      border: 2px solid var(--border-color);
     }
     
     .related-game-card:hover {
-      transform: translateY(-5px);
+      transform: translate(-4px, -4px);
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
     }
     
     .related-game-image {
       display: block;
       height: 120px;
       overflow: hidden;
+      border-bottom: 2px solid var(--border-color);
     }
     
     .related-game-image img {
@@ -465,6 +525,7 @@ import { Game } from '../models/game.model';
       height: 100%;
       object-fit: cover;
       transition: transform 0.5s;
+      image-rendering: pixelated;
     }
     
     .related-game-card:hover .related-game-image img {
@@ -479,16 +540,21 @@ import { Game } from '../models/game.model';
       margin: 0 0 10px 0;
       font-size: 1rem;
       line-height: 1.3;
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      letter-spacing: -1px;
     }
     
     .related-game-info h3 a {
-      color: #1a1a2e;
+      color: var(--heading-color);
       text-decoration: none;
       transition: color 0.3s;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
     }
     
     .related-game-info h3 a:hover {
-      color: #e94560;
+      color: var(--accent-color);
+      text-shadow: 0 0 5px var(--accent-color);
     }
     
     .related-game-price {
@@ -498,10 +564,18 @@ import { Game } from '../models/game.model';
     
     .related-game-price .original-price {
       font-size: 0.8rem;
+      color: var(--text-tertiary);
+      text-decoration: line-through;
+      margin-right: 5px;
+      font-family: var(--retro-font);
     }
     
     .related-game-price .current-price {
       font-size: 1rem;
+      color: var(--accent-color);
+      font-weight: 700;
+      font-family: var(--pixel-font);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
     }
     
     /* Loading */
@@ -517,8 +591,8 @@ import { Game } from '../models/game.model';
       width: 40px;
       height: 40px;
       border: 4px solid rgba(0, 0, 0, 0.1);
-      border-radius: 50%;
-      border-top-color: #e94560;
+      border-radius: 0;
+      border-top-color: var(--accent-color);
       animation: spin 1s ease-in-out infinite;
       margin-bottom: 20px;
     }
@@ -530,7 +604,9 @@ import { Game } from '../models/game.model';
     }
     
     .loading p {
-      color: #666;
+      color: var(--text-secondary);
+      font-family: var(--retro-font);
+      font-size: 1.2rem;
     }
     
     @media (max-width: 992px) {
@@ -579,77 +655,78 @@ import { Game } from '../models/game.model';
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       }
     }
-  `]
+  `,
+  ],
 })
 export class GameDetailComponent implements OnInit {
-  game: Game | undefined;
-  relatedGames: Game[] = [];
-  activeScreenshotIndex: number = 0;
-  currentImage: string = '';
+  game: Game | undefined
+  relatedGames: Game[] = []
+  activeScreenshotIndex = 0
+  currentImage = ""
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private gameService: GameService,
-    private cartService: CartService
+    private cartService: CartService,
   ) {}
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      const gameId = Number(params.get('id'));
-      
+    this.route.paramMap.subscribe((params) => {
+      const gameId = Number(params.get("id"))
+
       if (isNaN(gameId)) {
-        this.router.navigate(['/games']);
-        return;
+        this.router.navigate(["/games"])
+        return
       }
-      
-      this.gameService.getGame(gameId).subscribe(game => {
+
+      this.gameService.getGame(gameId).subscribe((game) => {
         if (!game) {
-          this.router.navigate(['/games']);
-          return;
+          this.router.navigate(["/games"])
+          return
         }
-        
-        this.game = game;
-        this.updateCurrentMedia();
-        
-        this.gameService.getGamesByCategory(game.category).subscribe(games => {
-          this.relatedGames = games.filter(g => g.id !== game.id).slice(0, 4);
-        });
-      });
-    });
+
+        this.game = game
+        this.updateCurrentMedia()
+
+        this.gameService.getGamesByCategory(game.category).subscribe((games) => {
+          this.relatedGames = games.filter((g) => g.id !== game.id).slice(0, 4)
+        })
+      })
+    })
   }
 
   selectMedia(index: number): void {
-    this.activeScreenshotIndex = index;
-    this.updateCurrentMedia();
+    this.activeScreenshotIndex = index
+    this.updateCurrentMedia()
   }
 
   updateCurrentMedia(): void {
     if (!this.game?.screenShots?.length) {
-      this.currentImage = this.game?.imageUrl || '';
-      return;
+      this.currentImage = this.game?.imageUrl || ""
+      return
     }
 
-    this.currentImage = this.game.screenShots[this.activeScreenshotIndex];
+    this.currentImage = this.game.screenShots[this.activeScreenshotIndex]
   }
 
   getStars(rating: number): number[] {
-    const stars: number[] = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    
-    for (let i = 0; i < fullStars; i++) stars.push(1);
-    if (hasHalfStar) stars.push(0.5);
-    while (stars.length < 5) stars.push(0);
-    
-    return stars;
+    const stars: number[] = []
+    const fullStars = Math.floor(rating)
+    const hasHalfStar = rating % 1 >= 0.5
+
+    for (let i = 0; i < fullStars; i++) stars.push(1)
+    if (hasHalfStar) stars.push(0.5)
+    while (stars.length < 5) stars.push(0)
+
+    return stars
   }
 
   getCurrentPrice(game: Game): number {
-    return game.discount ? game.price * (1 - game.discount) : game.price;
+    return game.discount ? game.price * (1 - game.discount) : game.price
   }
 
   addToCart(game: Game): void {
-    this.cartService.addToCart(game);
+    this.cartService.addToCart(game)
   }
 }

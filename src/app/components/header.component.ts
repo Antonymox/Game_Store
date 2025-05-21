@@ -3,7 +3,7 @@ import { RouterLink, RouterLinkActive } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { AuthService } from "../services/auth.service";
 import { CartService } from "../services/cart.service";
-import { ThemeService, Theme } from "../services/theme.service";
+import { ThemeService } from "../services/theme.service";
 import { User } from "../models/user.model";
 import { Cart } from "../models/cart.model";
 
@@ -88,10 +88,13 @@ import { Cart } from "../models/cart.model";
   styles: [
     `
     .header {
-      background-color: var(--header-bg, #1a1a2e);
-      color: var(--header-text, white);
+      background-color: var(--header-bg);
+      color: var(--header-text);
       padding: 15px 0;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+      border-bottom: 3px solid var(--border-color);
+      position: relative;
+      z-index: 10;
     }
     
     .container {
@@ -112,7 +115,11 @@ import { Cart } from "../models/cart.model";
       margin: 0;
       font-size: 24px;
       font-weight: 700;
-      color: var(--accent-color, #e94560);
+      color: var(--accent-color);
+      font-family: var(--pixel-font);
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.5);
     }
     
     .nav-list {
@@ -128,15 +135,20 @@ import { Cart } from "../models/cart.model";
     }
     
     .nav-list a {
-      color: var(--header-text, white);
+      color: var(--header-text);
       text-decoration: none;
       font-size: 16px;
       transition: color 0.3s;
       cursor: pointer;
+      font-family: var(--pixel-font);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
     }
     
     .nav-list a:hover, .nav-list a.active {
-      color: var(--accent-color, #e94560);
+      color: var(--accent-color);
+      text-shadow: 0 0 5px var(--accent-color);
     }
     
     .categories:hover .dropdown {
@@ -146,24 +158,26 @@ import { Cart } from "../models/cart.model";
     .dropdown {
       display: none;
       position: absolute;
-      background-color: var(--header-bg, #1a1a2e);
+      background-color: var(--bg-secondary);
       min-width: 160px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
       z-index: 1;
-      border-radius: 4px;
+      border-radius: 0;
       padding: 10px 0;
       margin-top: 10px;
+      border: 3px solid var(--border-color);
     }
     
     .dropdown a {
       display: block;
       padding: 8px 15px;
-      color: var(--header-text, white);
+      color: var(--text-primary);
       text-decoration: none;
     }
     
     .dropdown a:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: var(--bg-tertiary);
+      color: var(--accent-color);
     }
     
     .user-actions {
@@ -179,11 +193,12 @@ import { Cart } from "../models/cart.model";
     
     .search input {
       padding: 8px 15px;
-      border: none;
-      border-radius: 20px;
-      background-color: rgba(255, 255, 255, 0.1);
-      color: var(--header-text, white);
+      border: 3px solid var(--border-color);
+      background-color: var(--input-bg);
+      color: var(--text-primary);
       width: 200px;
+      font-family: var(--retro-font);
+      font-size: 1rem;
     }
     
     .search button {
@@ -193,8 +208,14 @@ import { Cart } from "../models/cart.model";
       transform: translateY(-50%);
       background: none;
       border: none;
-      color: var(--accent-color, #e94560);
+      color: var(--accent-color);
       cursor: pointer;
+      box-shadow: none;
+    }
+    
+    .search button:hover {
+      transform: translateY(-50%) scale(1.1);
+      text-shadow: 0 0 5px var(--accent-color);
     }
     
     .cart {
@@ -203,7 +224,7 @@ import { Cart } from "../models/cart.model";
     }
     
     .cart-icon {
-      color: var(--header-text, white);
+      color: var(--header-text);
       position: relative;
       display: inline-block;
     }
@@ -212,15 +233,17 @@ import { Cart } from "../models/cart.model";
       position: absolute;
       top: -8px;
       right: -8px;
-      background-color: var(--accent-color, #e94560);
+      background-color: var(--accent-color);
       color: white;
-      border-radius: 50%;
+      border-radius: 0;
       width: 18px;
       height: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 12px;
+      border: 2px solid var(--border-color);
+      font-family: var(--pixel-font);
     }
 
     .theme-toggle {
@@ -229,42 +252,52 @@ import { Cart } from "../models/cart.model";
     
     .theme-toggle-btn {
       background: none;
-      border: none;
-      color: var(--header-text, white);
+      border: 2px solid var(--border-color);
+      color: var(--header-text);
       cursor: pointer;
       width: 36px;
       height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 50%;
+      border-radius: 0;
       transition: background-color 0.3s;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
     }
     
     .theme-toggle-btn:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: var(--bg-tertiary);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
     }
     
     .btn {
       padding: 8px 15px;
-      border-radius: 4px;
+      border-radius: 0;
       text-decoration: none;
       font-weight: 500;
       transition: all 0.3s;
+      font-family: var(--pixel-font);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      border: 2px solid var(--border-color);
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
     }
     
     .btn-login {
-      color: var(--header-text, white);
+      color: var(--header-text);
       margin-right: 10px;
+      background-color: transparent;
     }
     
     .btn-register {
-      background-color: var(--accent-color, #e94560);
+      background-color: var(--accent-color);
       color: white;
     }
     
-    .btn-register:hover {
-      background-color: var(--accent-hover, #d63553);
+    .btn-register:hover, .btn-login:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
     }
     
     .user-info {
@@ -283,27 +316,23 @@ import { Cart } from "../models/cart.model";
     
     .logout {
       cursor: pointer;
-      color: var(--accent-color, #e94560) !important;
+      color: var(--accent-color) !important;
     }
-  `,
-  ],
+    `
+  ]
 })
 export class HeaderComponent implements OnInit {
   currentUser: User | null = null;
   cart: Cart = { items: [], totalItems: 0, totalPrice: 0 };
-  currentTheme: Theme = "light";
+  currentTheme: 'light' | 'dark' = 'light';
 
   constructor(
     private authService: AuthService,
     private cartService: CartService,
-    private themeService: ThemeService,
-  ) {
-    console.log("HeaderComponent: Constructor iniciado");
-  }
+    private themeService: ThemeService
+  ) {}
 
   ngOnInit(): void {
-    console.log("HeaderComponent: ngOnInit iniciado");
-
     this.authService.currentUser$.subscribe((user) => {
       this.currentUser = user;
     });
@@ -313,26 +342,12 @@ export class HeaderComponent implements OnInit {
     });
 
     this.themeService.currentTheme$.subscribe((theme) => {
-      console.log(`HeaderComponent: Tema recibido del servicio: ${theme}`);
       this.currentTheme = theme;
     });
-
-    setTimeout(() => {
-      console.log("HeaderComponent: Registrando estado del tema después de inicialización");
-      this.themeService.logCurrentState();
-    }, 1000);
-
-    console.log("HeaderComponent: ngOnInit completado");
   }
 
   toggleTheme(): void {
-    console.log("HeaderComponent: Botón de cambio de tema clickeado");
     this.themeService.toggleTheme();
-
-    setTimeout(() => {
-      console.log("HeaderComponent: Registrando estado del tema después del cambio");
-      this.themeService.logCurrentState();
-    }, 100);
   }
 
   logout(): void {
