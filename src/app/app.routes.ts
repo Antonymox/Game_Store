@@ -1,3 +1,18 @@
-import { Routes } from '@angular/router';
+import type { Routes } from '@angular/router';
+import { HomeComponent } from './components/home.component';
+import { GamesComponent } from './components/games.component';
+import { GameDetailComponent } from './components/game-detail.component';
+import { CartComponent } from './components/cart.component';
+import { LoginComponent } from './components/login.component';
+import { RegisterComponent } from './components/register.component';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+  { path: 'games', component: GamesComponent },
+  { path: 'games/:id', component: GameDetailComponent },
+  { path: 'cart', component: CartComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: '**', redirectTo: '/home' } // Ruta para manejar rutas no encontradas
+];

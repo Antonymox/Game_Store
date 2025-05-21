@@ -1,0 +1,655 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
+import { GameService } from '../services/game.service';
+import { CartService } from '../services/cart.service';
+import { Game } from '../models/game.model';
+
+@Component({
+  selector: 'app-game-detail',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  template: `
+    <div class="game-detail-container" *ngIf="game">
+      <div class="game-detail-content">
+        <div class="game-image-container">
+          <div class="main-media-container">
+            <img [src]="currentImage" 
+                 [alt]="game.title" 
+                 class="game-image">
+          </div>
+          
+          <div class="gallery-container">
+            <div class="gallery-scroll">
+              <div class="gallery-item" 
+                   *ngFor="let item of game.screenShots; let i = index"
+                   [class.active]="i === activeScreenshotIndex"
+                   (click)="selectMedia(i)">
+                <img [src]="item" [alt]="game.title + ' screenshot ' + (i + 1)">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="game-info">
+          <div class="game-header">
+            <div class="game-category">{{ game.category }}</div>
+            <h1 class="game-title">{{ game.title }}</h1>
+            
+            <div class="game-meta">
+              <div class="publisher">
+                <span class="meta-label">Desarrollador:</span>
+                <span class="meta-value">{{ game.publisher }}</span>
+              </div>
+              <div class="release-date">
+                <span class="meta-label">Fecha de lanzamiento:</span>
+                <span class="meta-value">{{ game.releaseDate | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="rating">
+                <span class="meta-label">Calificación:</span>
+                <div class="stars">
+                  <span *ngFor="let star of getStars(game.rating)" class="star" [class.half]="star === 0.5" [class.empty]="star === 0">
+                    <svg *ngIf="star === 1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                    </svg>
+                    <svg *ngIf="star === 0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M5.354 5.119 7.538.792A.516.516 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.537.537 0 0 1 16 6.32a.548.548 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.52.52 0 0 1-.146.05c-.342.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.172-.403.58.58 0 0 1 .085-.302.513.513 0 0 1 .37-.245l4.898-.696zM8 12.027a.5.5 0 0 1 .232.056l3.686 1.894-.694-3.957a.565.565 0 0 1 .162-.505l2.907-2.77-4.052-.576a.525.525 0 0 1-.393-.288L8.001 2.223 8 2.226v9.8z"/>
+                    </svg>
+                    <svg *ngIf="star === 0" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                    </svg>
+                  </span>
+                </div>
+                <span class="rating-value">{{ game.rating }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="game-description">
+            <h2>Descripción</h2>
+            <p>{{ game.description }}</p>
+          </div>
+          
+          <div class="game-purchase">
+            <div class="game-price">
+              <div *ngIf="game.discount" class="original-price">{{ game.price | currency:'USD' }}</div>
+              <div class="current-price">{{ getCurrentPrice(game) | currency:'USD' }}</div>
+              <div *ngIf="game.discount" class="discount-badge">-{{ (game.discount * 100) | number:'1.0-0' }}%</div>
+            </div>
+            
+            <div class="purchase-actions">
+              <button class="btn-add-cart" (click)="addToCart(game)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </svg>
+                Añadir al Carrito
+              </button>
+              <button class="btn-buy-now">Comprar Ahora</button>
+            </div>
+          </div>
+          
+          <div class="game-details">
+            <h2>Detalles del Juego</h2>
+            <div class="details-grid">
+              <div class="detail-item">
+                <span class="detail-label">Género:</span>
+                <span class="detail-value">{{ game.category }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Desarrollador:</span>
+                <span class="detail-value">{{ game.publisher }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Fecha de Lanzamiento:</span>
+                <span class="detail-value">{{ game.releaseDate | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Plataforma:</span>
+                <span class="detail-value">PC</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Idiomas:</span>
+                <span class="detail-value">Español, Inglés, Francés, Alemán</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Clasificación:</span>
+                <span class="detail-value">PEGI 18</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="related-games">
+        <h2>Juegos Relacionados</h2>
+        <div class="related-games-grid">
+          <div class="related-game-card" *ngFor="let relatedGame of relatedGames">
+            <a [routerLink]="['/games', relatedGame.id]" class="related-game-image">
+              <img [src]="relatedGame.imageUrl" [alt]="relatedGame.title">
+            </a>
+            <div class="related-game-info">
+              <h3><a [routerLink]="['/games', relatedGame.id]">{{ relatedGame.title }}</a></h3>
+              <div class="related-game-price">
+                <span *ngIf="relatedGame.discount" class="original-price">{{ relatedGame.price | currency:'USD' }}</span>
+                <span class="current-price">{{ getCurrentPrice(relatedGame) | currency:'USD' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="loading" *ngIf="!game">
+      <div class="spinner"></div>
+      <p>Cargando detalles del juego...</p>
+    </div>
+  `,
+  styles: [`
+    .game-detail-container {
+      padding: 20px 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .game-detail-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+    
+    /* Game Image Container */
+    .game-image-container {
+      display: flex;
+      flex-direction: column;
+      margin-left: -20px;
+    }
+    
+    .main-media-container {
+      width: 100%;
+      height: 400px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      background-color: #f5f5f5;
+    }
+    
+    .game-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    
+    /* Gallery Styles */
+    .gallery-container {
+      width: calc(100% + 40px);
+      overflow-x: auto;
+      padding: 10px 20px;
+      margin-left: -20px;
+    }
+    
+    .gallery-scroll {
+      display: flex;
+      gap: 12px;
+      padding-bottom: 10px;
+    }
+    
+    .gallery-item {
+      width: 100px;
+      height: 75px;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+      border: 2px solid transparent;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .gallery-item:hover {
+      opacity: 0.9;
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .gallery-item.active {
+      opacity: 1;
+      border-color: #e94560;
+      transform: translateY(-2px);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    /* Custom scrollbar */
+    .gallery-container::-webkit-scrollbar {
+      height: 6px;
+    }
+    
+    .gallery-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+    
+    .gallery-container::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+    
+    .gallery-container::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+
+    /* Game Info */
+    .game-header {
+      margin-bottom: 25px;
+    }
+    
+    .game-category {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+    
+    .game-title {
+      font-size: 2rem;
+      color: #1a1a2e;
+      margin: 0 0 15px 0;
+    }
+    
+    .game-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .meta-label {
+      color: #666;
+      margin-right: 5px;
+    }
+    
+    .meta-value {
+      color: #1a1a2e;
+      font-weight: 500;
+    }
+    
+    .rating {
+      display: flex;
+      align-items: center;
+    }
+    
+    .stars {
+      display: flex;
+      color: #ffc107;
+      margin: 0 5px;
+    }
+    
+    .star {
+      margin-right: 2px;
+    }
+    
+    .rating-value {
+      color: #1a1a2e;
+      font-weight: 500;
+    }
+    
+    /* Game Description */
+    .game-description {
+      margin-bottom: 30px;
+    }
+    
+    .game-description h2 {
+      font-size: 1.3rem;
+      color: #1a1a2e;
+      margin-bottom: 15px;
+    }
+    
+    .game-description p {
+      color: #666;
+      line-height: 1.6;
+    }
+    
+    /* Game Purchase */
+    .game-purchase {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .game-price {
+      display: flex;
+      align-items: center;
+    }
+    
+    .original-price {
+      color: #999;
+      text-decoration: line-through;
+      font-size: 1rem;
+      margin-right: 10px;
+    }
+    
+    .current-price {
+      color: #1a1a2e;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .discount-badge {
+      background-color: #e94560;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      margin-left: 10px;
+    }
+    
+    .purchase-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .btn-add-cart, .btn-buy-now {
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-add-cart {
+      background-color: #1a1a2e;
+      color: white;
+      border: none;
+    }
+    
+    .btn-add-cart:hover {
+      background-color: #16213e;
+    }
+    
+    .btn-add-cart svg {
+      margin-right: 8px;
+    }
+    
+    .btn-buy-now {
+      background-color: #e94560;
+      color: white;
+      border: none;
+    }
+    
+    .btn-buy-now:hover {
+      background-color: #d63553;
+    }
+    
+    /* Game Details */
+    .game-details {
+      margin-bottom: 30px;
+    }
+    
+    .game-details h2 {
+      font-size: 1.3rem;
+      color: #1a1a2e;
+      margin-bottom: 15px;
+    }
+    
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .detail-label {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+    
+    .detail-value {
+      color: #1a1a2e;
+      font-weight: 500;
+    }
+    
+    /* Related Games */
+    .related-games {
+      margin-top: 40px;
+    }
+    
+    .related-games h2 {
+      font-size: 1.5rem;
+      color: #1a1a2e;
+      margin-bottom: 20px;
+    }
+    
+    .related-games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    
+    .related-game-card {
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s;
+    }
+    
+    .related-game-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .related-game-image {
+      display: block;
+      height: 120px;
+      overflow: hidden;
+    }
+    
+    .related-game-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+    
+    .related-game-card:hover .related-game-image img {
+      transform: scale(1.05);
+    }
+    
+    .related-game-info {
+      padding: 15px;
+    }
+    
+    .related-game-info h3 {
+      margin: 0 0 10px 0;
+      font-size: 1rem;
+      line-height: 1.3;
+    }
+    
+    .related-game-info h3 a {
+      color: #1a1a2e;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    .related-game-info h3 a:hover {
+      color: #e94560;
+    }
+    
+    .related-game-price {
+      display: flex;
+      align-items: center;
+    }
+    
+    .related-game-price .original-price {
+      font-size: 0.8rem;
+    }
+    
+    .related-game-price .current-price {
+      font-size: 1rem;
+    }
+    
+    /* Loading */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 0;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: #e94560;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+    
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .loading p {
+      color: #666;
+    }
+    
+    @media (max-width: 992px) {
+      .game-detail-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .game-image-container {
+        margin-left: 0;
+      }
+      
+      .gallery-container {
+        width: 100%;
+        padding: 10px 0;
+        margin-left: 0;
+      }
+      
+      .game-purchase {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .game-price {
+        margin-bottom: 15px;
+      }
+      
+      .purchase-actions {
+        width: 100%;
+      }
+      
+      .btn-add-cart, .btn-buy-now {
+        flex: 1;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .game-detail-container {
+        padding: 20px;
+      }
+      
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .related-games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+    }
+  `]
+})
+export class GameDetailComponent implements OnInit {
+  game: Game | undefined;
+  relatedGames: Game[] = [];
+  activeScreenshotIndex: number = 0;
+  currentImage: string = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private gameService: GameService,
+    private cartService: CartService
+  ) {}
+
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const gameId = Number(params.get('id'));
+      
+      if (isNaN(gameId)) {
+        this.router.navigate(['/games']);
+        return;
+      }
+      
+      this.gameService.getGame(gameId).subscribe(game => {
+        if (!game) {
+          this.router.navigate(['/games']);
+          return;
+        }
+        
+        this.game = game;
+        this.updateCurrentMedia();
+        
+        this.gameService.getGamesByCategory(game.category).subscribe(games => {
+          this.relatedGames = games.filter(g => g.id !== game.id).slice(0, 4);
+        });
+      });
+    });
+  }
+
+  selectMedia(index: number): void {
+    this.activeScreenshotIndex = index;
+    this.updateCurrentMedia();
+  }
+
+  updateCurrentMedia(): void {
+    if (!this.game?.screenShots?.length) {
+      this.currentImage = this.game?.imageUrl || '';
+      return;
+    }
+
+    this.currentImage = this.game.screenShots[this.activeScreenshotIndex];
+  }
+
+  getStars(rating: number): number[] {
+    const stars: number[] = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    
+    for (let i = 0; i < fullStars; i++) stars.push(1);
+    if (hasHalfStar) stars.push(0.5);
+    while (stars.length < 5) stars.push(0);
+    
+    return stars;
+  }
+
+  getCurrentPrice(game: Game): number {
+    return game.discount ? game.price * (1 - game.discount) : game.price;
+  }
+
+  addToCart(game: Game): void {
+    this.cartService.addToCart(game);
+  }
+}
