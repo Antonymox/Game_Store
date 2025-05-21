@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { GameService } from '../services/game.service';
-import { Game } from '../models/game.model';
-import { GameCardComponent } from '../components/game-card.component';
+import { Component, type OnInit } from "@angular/core"
+import { CommonModule } from "@angular/common"
+import { RouterLink } from "@angular/router"
+import { GameService } from "../services/game.service"
+import type { Game } from "../models/game.model"
+import { GameCardComponent } from "./game-card.component"
 
 @Component({
-  selector: 'app-home',
+  selector: "app-home",
   standalone: true,
   imports: [CommonModule, RouterLink, GameCardComponent],
   template: `
@@ -97,17 +97,18 @@ import { GameCardComponent } from '../components/game-card.component';
       </section>
     </div>
   `,
-  styles: [`
+  styles: [
+    `
     .home-container {
       width: 100%;
     }
     
     /* Hero Section */
     .hero {
-       background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), 
-                  url('/asset/Wallpaper.png') no-repeat center center;
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), 
+                url('/asset/Wallpaper.png') no-repeat center center;
       background-size: cover;
-      color: black;
+      color: white;
       padding: 120px 20px;
       text-align: center;
       margin-bottom: 40px;
@@ -185,7 +186,7 @@ import { GameCardComponent } from '../components/game-card.component';
     
     .section-header h2 {
       font-size: 1.8rem;
-      color:rgb(255, 255, 255);
+      color: var(--heading-color);
       position: relative;
     }
     
@@ -329,38 +330,35 @@ import { GameCardComponent } from '../components/game-card.component';
         grid-template-columns: 1fr 1fr;
       }
     }
-  `]
+  `,
+  ],
 })
 export class HomeComponent implements OnInit {
-  featuredGames: Game[] = [];
-  newReleases: Game[] = [];
-  discountedGames: Game[] = [];
-  
+  featuredGames: Game[] = []
+  newReleases: Game[] = []
+  discountedGames: Game[] = []
+
   categories = [
-    { name: 'RPG', image: '/assets/images/categories/rpg.jpg' },
-    { name: 'Acción/Aventura', image: '/assets/images/categories/action.jpg' },
-    { name: 'FPS', image: '/assets/images/categories/fps.jpg' },
-    { name: 'Deportes', image: '/assets/images/categories/sports.jpg' }
-  ];
+    { name: "RPG", image: "/assets/images/categories/rpg.jpg" },
+    { name: "Acción/Aventura", image: "/assets/images/categories/action.jpg" },
+    { name: "FPS", image: "/assets/images/categories/fps.jpg" },
+    { name: "Deportes", image: "/assets/images/categories/sports.jpg" },
+  ]
 
   constructor(private gameService: GameService) {}
 
   ngOnInit(): void {
-    this.gameService.getGames().subscribe(games => {
+    this.gameService.getGames().subscribe((games) => {
       // Juegos destacados (los 4 con mejor rating)
-      this.featuredGames = [...games]
-        .sort((a, b) => b.rating - a.rating)
-        .slice(0, 4);
-      
+      this.featuredGames = [...games].sort((a, b) => b.rating - a.rating).slice(0, 4)
+
       // Nuevos lanzamientos (ordenados por fecha)
       this.newReleases = [...games]
         .sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())
-        .slice(0, 4);
-      
+        .slice(0, 4)
+
       // Juegos con descuento
-      this.discountedGames = games
-        .filter(game => game.discount)
-        .slice(0, 4);
-    });
+      this.discountedGames = games.filter((game) => game.discount).slice(0, 4)
+    })
   }
 }

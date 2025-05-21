@@ -1,11 +1,11 @@
-import { Component, type OnInit } from "@angular/core"
-import { RouterLink, RouterLinkActive } from "@angular/router"
-import { CommonModule } from "@angular/common"
-import type { AuthService } from "../services/auth.service"
-import type { CartService } from "../services/cart.service"
-import type { User } from "../models/user.model"
-import type { Cart } from "../models/cart.model"
-import type { ThemeService, Theme } from "../services/theme.service"
+import { Component, OnInit } from "@angular/core";
+import { RouterLink, RouterLinkActive } from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { AuthService } from "../services/auth.service";
+import { CartService } from "../services/cart.service";
+import { ThemeService, Theme } from "../services/theme.service";
+import { User } from "../models/user.model";
+import { Cart } from "../models/cart.model";
 
 @Component({
   selector: "app-header",
@@ -289,55 +289,53 @@ import type { ThemeService, Theme } from "../services/theme.service"
   ],
 })
 export class HeaderComponent implements OnInit {
-  currentUser: User | null = null
-  cart: Cart = { items: [], totalItems: 0, totalPrice: 0 }
-  currentTheme: Theme = "light"
+  currentUser: User | null = null;
+  cart: Cart = { items: [], totalItems: 0, totalPrice: 0 };
+  currentTheme: Theme = "light";
 
   constructor(
     private authService: AuthService,
     private cartService: CartService,
     private themeService: ThemeService,
   ) {
-    console.log("HeaderComponent: Constructor iniciado")
+    console.log("HeaderComponent: Constructor iniciado");
   }
 
   ngOnInit(): void {
-    console.log("HeaderComponent: ngOnInit iniciado")
+    console.log("HeaderComponent: ngOnInit iniciado");
 
     this.authService.currentUser$.subscribe((user) => {
-      this.currentUser = user
-    })
+      this.currentUser = user;
+    });
 
     this.cartService.cart$.subscribe((cart) => {
-      this.cart = cart
-    })
+      this.cart = cart;
+    });
 
     this.themeService.currentTheme$.subscribe((theme) => {
-      console.log(`HeaderComponent: Tema recibido del servicio: ${theme}`)
-      this.currentTheme = theme
-    })
+      console.log(`HeaderComponent: Tema recibido del servicio: ${theme}`);
+      this.currentTheme = theme;
+    });
 
-    // Registrar el estado actual del tema
     setTimeout(() => {
-      console.log("HeaderComponent: Registrando estado del tema después de inicialización")
-      this.themeService.logCurrentState()
-    }, 1000)
+      console.log("HeaderComponent: Registrando estado del tema después de inicialización");
+      this.themeService.logCurrentState();
+    }, 1000);
 
-    console.log("HeaderComponent: ngOnInit completado")
+    console.log("HeaderComponent: ngOnInit completado");
   }
 
   toggleTheme(): void {
-    console.log("HeaderComponent: Botón de cambio de tema clickeado")
-    this.themeService.toggleTheme()
+    console.log("HeaderComponent: Botón de cambio de tema clickeado");
+    this.themeService.toggleTheme();
 
-    // Registrar el estado después del cambio
     setTimeout(() => {
-      console.log("HeaderComponent: Registrando estado del tema después del cambio")
-      this.themeService.logCurrentState()
-    }, 100)
+      console.log("HeaderComponent: Registrando estado del tema después del cambio");
+      this.themeService.logCurrentState();
+    }, 100);
   }
 
   logout(): void {
-    this.authService.logout()
+    this.authService.logout();
   }
 }
