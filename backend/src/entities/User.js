@@ -13,11 +13,20 @@ module.exports = new EntitySchema({
       type: "varchar",
       length: 100,
       unique: true,
-    },
-    email: {
+    },    email: {
       type: "varchar",
       length: 100,
       unique: true,
+    },
+    firstName: {
+      type: "varchar",
+      length: 100,
+      nullable: true,
+    },
+    lastName: {
+      type: "varchar",
+      length: 100,
+      nullable: true,
     },
     password: {
       type: "varchar",

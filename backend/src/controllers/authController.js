@@ -54,10 +54,15 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const userRepository = getRepository(User)
-    const { email, password } = req.body
+    const { email, username, password } = req.body
 
-    // Buscar el usuario por email
-    const user = await userRepository.findOne({ where: { email } })
+    // Buscar el usuario por email o username
+    const user = await userRepository.findOne({ 
+      where: [
+        { email: email || "" }, 
+        { username: username || email || "" }
+      ]
+    })
 
     if (!user) {
       return res.status(401).json({ message: "Credenciales inválidas" })
