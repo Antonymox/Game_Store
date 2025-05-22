@@ -15,9 +15,10 @@ const PORT = process.env.PORT || 3000
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:4200", // Reemplaza con la URL de tu frontend
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: ["http://localhost:4200", "http://127.0.0.1:4200", "http://localhost:4201", "http://127.0.0.1:4201"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Origin", "Accept"],
   }),
 )
 app.use(express.json())
