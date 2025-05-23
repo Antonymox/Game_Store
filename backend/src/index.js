@@ -10,12 +10,12 @@ dotenv.config()
 
 // Crear la aplicación Express
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3001; // Cambiamos a puerto 3001
 
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:4200", "http://127.0.0.1:4200", "http://localhost:4201", "http://127.0.0.1:4201"],
+    origin: ["http://localhost:4200", "http://127.0.0.1:4200", "http://localhost:4201", "http://127.0.0.1:4201","http://localhost:3000","http://127.0.0.1:3000"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Origin", "Accept"],

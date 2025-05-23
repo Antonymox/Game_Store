@@ -4,11 +4,15 @@ import { RouterLink } from "@angular/router"
 import { FormsModule } from "@angular/forms"
 import { CartService } from "../services/cart.service"
 import type { Cart } from "../models/cart.model"
+import { CheckoutReceiptComponent } from './checkout-receipt.component';
+import { jsPDF } from 'jspdf';
+import { EmailService } from '../services/email.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: "app-cart",
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, CheckoutReceiptComponent],
   template: `
     <div class="cart-container">
       <h1 class="cart-title">Carrito de Compras</h1>
@@ -124,8 +128,13 @@ import type { Cart } from "../models/cart.model"
             <button class="btn-apply">Aplicar</button>
           </div>
           
-          <button class="btn-checkout">Proceder al Pago</button>
+          <button class="btn-checkout" (click)="proceedToCheckout()">Proceder al Pago</button>
         </div>
+        
+        <app-checkout-receipt
+          [cart]="cart"
+          [isVisible]="showReceipt"
+        ></app-checkout-receipt>
       </div>
     </div>
   `,
@@ -518,8 +527,15 @@ import type { Cart } from "../models/cart.model"
 })
 export class CartComponent implements OnInit {
   cart: Cart = { items: [], totalItems: 0, totalPrice: 0 }
+  showReceipt = false;
+  currentDate = new Date();
+  orderNumber = Math.floor(Math.random() * 1000000);
 
-  constructor(private cartService: CartService) {}
+  constructor(
+    private cartService: CartService,
+    private emailService: EmailService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.cartService.cart$.subscribe((cart) => {
@@ -554,5 +570,48 @@ export class CartComponent implements OnInit {
     if (confirm("¿Estás seguro de que deseas vaciar el carrito?")) {
       this.cartService.clearCart()
     }
+  }
+
+  proceedToCheckout(): void {
+    this.showReceipt = true;
+    const currentUser = this.authService.currentUserValue;
+    
+    if (currentUser && currentUser.email) {
+      this.emailService.sendReceiptEmail(
+        this.cart,
+        currentUser.email,
+        this.orderNumber.toString()
+      ).subscribe({
+        next: () => {
+          console.log('Recibo enviado por correo electrónico');
+        },
+        error: (error) => {
+          console.error('Error al enviar el recibo por correo:', error);
+        }
+      });
+    }
+  }
+
+  downloadPDF(): void {
+    const doc = new jsPDF();
+    
+    // Añadir contenido al PDF
+    doc.text('Recibo de Compra', 20, 20);
+    doc.text(`Fecha: ${this.currentDate.toLocaleString()}`, 20, 30);
+    doc.text(`No. de Orden: ${this.orderNumber}`, 20, 40);
+    
+    let y = 60;
+    this.cart.items.forEach(item => {
+      doc.text(`${item.game.title} - ${item.quantity}x - $${this.getCurrentPrice(item.game) * item.quantity}`, 20, y);
+      y += 10;
+    });
+    
+    y += 10;
+    doc.text(`Subtotal: $${this.cart.totalPrice}`, 20, y);
+    doc.text(`IVA (16%): $${this.cart.totalPrice * 0.16}`, 20, y + 10);
+    doc.text(`Total: $${this.cart.totalPrice * 1.16}`, 20, y + 20);
+    
+    // Guardar el PDF
+    doc.save(`recibo-${this.orderNumber}.pdf`);
   }
 }

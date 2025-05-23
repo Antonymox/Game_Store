@@ -7,6 +7,7 @@ import type { User } from "../models/user.model"
   providedIn: "root",
 })
 export class AuthService {
+  // Actualiza esto al puerto correcto si es diferente
   private apiUrl = "http://localhost:3000/api"
   private currentUserSubject = new BehaviorSubject<User | null>(null)
   public currentUser$ = this.currentUserSubject.asObservable()
@@ -63,7 +64,9 @@ export class AuthService {
       email: usernameOrEmail.includes('@') ? usernameOrEmail : undefined,
       username: !usernameOrEmail.includes('@') ? usernameOrEmail : undefined,
       password
-    };    return this.http.post<{message: string, user: User, token: string}>(
+    };
+
+    return this.http.post<{message: string, user: User, token: string}>(
       `${this.apiUrl}/auth/login`, 
       loginData,
       {
@@ -75,9 +78,7 @@ export class AuthService {
     ).pipe(
       tap(response => {
         if (response.user && response.token) {
-          // Guardar el token
           localStorage.setItem('token', response.token);
-          // Guardar el usuario sin contraseña
           const { password, ...userWithoutPassword } = response.user;
           localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
           this.currentUserSubject.next(userWithoutPassword);
@@ -86,7 +87,14 @@ export class AuthService {
       map(response => response.user),
       catchError(error => {
         console.error('Error en el login:', error);
-        throw error;
+        // Manejo más específico del error
+        if (error.status === 401) {
+          throw new Error('Credenciales inválidas');
+        } else if (error.status === 404) {
+          throw new Error('Usuario no encontrado');
+        } else {
+          throw new Error('Error en el servidor. Por favor, intente más tarde');
+        }
       })
     );
   }  logout(): void {

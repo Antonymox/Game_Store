@@ -358,7 +358,7 @@ export class LoginComponent {
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = "Ocurrió un error al iniciar sesión. Inténtalo de nuevo.";
+        this.errorMessage = error.message || "Ocurrió un error al iniciar sesión. Inténtalo de nuevo.";
         console.error("Error de inicio de sesión:", error);
       }
     });
