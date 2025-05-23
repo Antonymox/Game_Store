@@ -10,11 +10,11 @@ module.exports = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   synchronize: true, // En producción, esto debería ser false
-  logging: false,
-  entities: [
+  logging: false,  entities: [
     require("../entities/User"),
     require("../entities/Forum"),
     require("../entities/Thread"),
     require("../entities/Post"),
+    require("../entities/Cart"),
   ],
 }
