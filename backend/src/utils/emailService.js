@@ -16,10 +16,15 @@ if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD ||
 
 // Configurar el transporter de nodemailer
 let transporterConfig = {
-  service: 'gmail',  // Puedes cambiar a otro servicio de correo
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER || 'tu-correo@gmail.com',
     pass: process.env.EMAIL_PASSWORD || 'tu-contraseña-de-app'
+  },
+  tls: {
+    rejectUnauthorized: false // Solo para desarrollo
   }
 };
 

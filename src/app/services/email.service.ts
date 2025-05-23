@@ -7,7 +7,7 @@ import type { Cart } from '../models/cart.model';
   providedIn: 'root'
 })
 export class EmailService {
-  private apiUrl = 'http://localhost:3001/api/email';
+  private apiUrl = 'http://localhost:3001/api/email'; // Asegúrate de que este puerto coincida con el del backend
 
   constructor(private http: HttpClient) {}
 
@@ -19,13 +19,15 @@ export class EmailService {
       orderNumber: orderNumber,
       date: new Date(),
       total: cart.totalPrice * 1.16
-    };
-
-    const headers = new HttpHeaders({
+    };    const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Accept': 'application/json'
+      'Accept': 'application/json',
+      'Access-Control-Allow-Origin': '*'
     });
 
-    return this.http.post(`${this.apiUrl}/send-receipt`, emailData, { headers });
+    return this.http.post(`${this.apiUrl}/send-receipt`, emailData, { 
+      headers,
+      withCredentials: false // Deshabilitamos credenciales para desarrollo local
+    });
   }
 }

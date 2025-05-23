@@ -28,22 +28,44 @@ interface EmailRequest {
 }
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // true para 465, false para otros puertos
   auth: {
     user: process.env['EMAIL_USER'],
     pass: process.env['EMAIL_PASSWORD']
+  },
+  tls: {
+    rejectUnauthorized: false // No recomendado para producción, pero útil para desarrollo local
   }
 });
 
 // Definimos el tipo correcto para el handler de la ruta
 router.post('/send-receipt', async (req: Request<{}, {}, EmailRequest>, res: Response) => {
   try {
-    console.log('Recibida solicitud de envío de correo:', req.body);
+    // Log de la solicitud completa
+    console.log('Headers recibidos:', req.headers);
+    console.log('Cuerpo de la solicitud:', req.body);
+    
     const { to, subject, cart, orderNumber, date, total } = req.body;
     
     if (!to || !cart || !orderNumber) {
+      console.log('Datos faltantes:', { to, cart, orderNumber });
       res.status(400).json({ message: 'Faltan datos requeridos' });
       return;
+    }
+
+    console.log('Verificando configuración de correo...');
+    console.log('EMAIL_USER:', process.env['EMAIL_USER']);
+    console.log('EMAIL_PASSWORD está configurado:', !!process.env['EMAIL_PASSWORD']);
+
+    // Verificar la conexión con el servidor SMTP
+    try {
+      await transporter.verify();
+      console.log('Conexión SMTP verificada correctamente');
+    } catch (error) {
+      console.error('Error en la verificación SMTP:', error);
+      throw error;
     }
 
     const htmlContent = `
@@ -72,10 +94,17 @@ router.post('/send-receipt', async (req: Request<{}, {}, EmailRequest>, res: Res
       html: htmlContent,
     };
 
-    await transporter.sendMail(mailOptions);
-    res.json({ message: 'Recibo enviado correctamente' });
-    return;
-  } catch (error) {
+    console.log('Intentando enviar correo con opciones:', {
+      from: mailOptions.from,
+      to: mailOptions.to,
+      subject: mailOptions.subject
+    });
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Correo enviado exitosamente:', info);
+
+    res.json({ message: 'Recibo enviado correctamente', info });
+    return;  } catch (error: any) {
     console.error('Error detallado:', error);
     res.status(500).json({ 
       message: 'Error al enviar el recibo',

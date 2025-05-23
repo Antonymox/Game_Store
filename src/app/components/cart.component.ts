@@ -6,7 +6,6 @@ import { CartService } from "../services/cart.service"
 import type { Cart } from "../models/cart.model"
 import { CheckoutReceiptComponent } from './checkout-receipt.component';
 import { jsPDF } from 'jspdf';
-import { EmailService } from '../services/email.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -526,90 +525,114 @@ import { AuthService } from '../services/auth.service';
   ],
 })
 export class CartComponent implements OnInit {
-  cart: Cart = { items: [], totalItems: 0, totalPrice: 0 }
+  cart: Cart = { items: [], totalItems: 0, totalPrice: 0 };
   showReceipt = false;
   currentDate = new Date();
   orderNumber = Math.floor(Math.random() * 1000000);
 
   constructor(
     private cartService: CartService,
-    private emailService: EmailService,
     private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.cartService.cart$.subscribe((cart) => {
-      this.cart = cart
-    })
+      this.cart = cart;
+    });
   }
 
   getCurrentPrice(game: any): number {
-    return game.discount ? game.price * (1 - game.discount) : game.price
+    return game.discount ? game.price * (1 - game.discount) : game.price;
   }
 
   onQuantityChange(event: Event, gameId: number): void {
-    const input = event.target as HTMLInputElement
-    const quantity = Number.parseInt(input.value, 10)
-    this.updateQuantity(gameId, quantity)
+    const input = event.target as HTMLInputElement;
+    const quantity = Number.parseInt(input.value, 10);
+    this.updateQuantity(gameId, quantity);
   }
 
   updateQuantity(gameId: number, quantity: number): void {
-    const parsedQuantity = Number.parseInt(quantity.toString(), 10)
+    const parsedQuantity = Number.parseInt(quantity.toString(), 10);
     if (isNaN(parsedQuantity)) {
-      return
+      return;
     }
-
-    this.cartService.updateQuantity(gameId, Math.max(1, parsedQuantity))
+    this.cartService.updateQuantity(gameId, Math.max(1, parsedQuantity));
   }
 
   removeItem(gameId: number): void {
-    this.cartService.removeFromCart(gameId)
+    this.cartService.removeFromCart(gameId);
   }
 
   clearCart(): void {
     if (confirm("¿Estás seguro de que deseas vaciar el carrito?")) {
-      this.cartService.clearCart()
+      this.cartService.clearCart();
     }
   }
 
   proceedToCheckout(): void {
     this.showReceipt = true;
-    const currentUser = this.authService.currentUserValue;
-    
-    if (currentUser && currentUser.email) {
-      this.emailService.sendReceiptEmail(
-        this.cart,
-        currentUser.email,
-        this.orderNumber.toString()
-      ).subscribe({
-        next: () => {
-          console.log('Recibo enviado por correo electrónico');
-        },
-        error: (error) => {
-          console.error('Error al enviar el recibo por correo:', error);
-        }
-      });
-    }
+    this.downloadPDF();
   }
 
   downloadPDF(): void {
     const doc = new jsPDF();
+    const padding = 20;
+    let yPosition = padding;
     
-    // Añadir contenido al PDF
-    doc.text('Recibo de Compra', 20, 20);
-    doc.text(`Fecha: ${this.currentDate.toLocaleString()}`, 20, 30);
-    doc.text(`No. de Orden: ${this.orderNumber}`, 20, 40);
+    // Título y datos generales
+    doc.setFontSize(20);
+    doc.text('Recibo de Compra - GameStore', padding, yPosition);
     
-    let y = 60;
+    yPosition += 20;
+    doc.setFontSize(12);
+    doc.text(`Fecha: ${this.currentDate.toLocaleString()}`, padding, yPosition);
+    
+    yPosition += 10;
+    doc.text(`No. de Orden: ${this.orderNumber}`, padding, yPosition);
+    
+    yPosition += 20;
+    // Cabecera de items
+    doc.setFontSize(14);
+    doc.text('Producto', padding, yPosition);
+    doc.text('Cantidad', 100, yPosition);
+    doc.text('Precio', 140, yPosition);
+    doc.text('Total', 180, yPosition);
+    
+    yPosition += 10;
+    doc.line(padding, yPosition, 190, yPosition);
+    
+    yPosition += 10;
+    // Items del carrito
+    doc.setFontSize(12);
     this.cart.items.forEach(item => {
-      doc.text(`${item.game.title} - ${item.quantity}x - $${this.getCurrentPrice(item.game) * item.quantity}`, 20, y);
-      y += 10;
+      // Verificar si necesitamos una nueva página
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = padding;
+      }
+      
+      const price = this.getCurrentPrice(item.game);
+      const total = price * item.quantity;
+      
+      doc.text(item.game.title.substring(0, 40), padding, yPosition);
+      doc.text(item.quantity.toString(), 100, yPosition);
+      doc.text(`$${price.toFixed(2)}`, 140, yPosition);
+      doc.text(`$${total.toFixed(2)}`, 180, yPosition);
+      
+      yPosition += 10;
     });
     
-    y += 10;
-    doc.text(`Subtotal: $${this.cart.totalPrice}`, 20, y);
-    doc.text(`IVA (16%): $${this.cart.totalPrice * 0.16}`, 20, y + 10);
-    doc.text(`Total: $${this.cart.totalPrice * 1.16}`, 20, y + 20);
+    yPosition += 10;
+    doc.line(padding, yPosition, 190, yPosition);
+    
+    yPosition += 15;
+    // Totales
+    doc.text(`Subtotal: $${this.cart.totalPrice.toFixed(2)}`, 130, yPosition);
+    yPosition += 10;
+    doc.text(`IVA (16%): $${(this.cart.totalPrice * 0.16).toFixed(2)}`, 130, yPosition);
+    yPosition += 10;
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Total: $${(this.cart.totalPrice * 1.16).toFixed(2)}`, 130, yPosition);
     
     // Guardar el PDF
     doc.save(`recibo-${this.orderNumber}.pdf`);

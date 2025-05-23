@@ -8,8 +8,10 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:4200',
-  credentials: true
+  origin: '*', // En desarrollo permitimos cualquier origen
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With']
 }));
 
 app.use(express.json());
