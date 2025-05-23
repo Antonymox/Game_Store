@@ -10,6 +10,7 @@ export class AuthService {
   private apiUrl = "http://localhost:3000/api"
   private currentUserSubject = new BehaviorSubject<User | null>(null)
   public currentUser$ = this.currentUserSubject.asObservable()
+
   constructor(private http: HttpClient) {
     // Cargar usuario del localStorage si existe
     const storedUser = localStorage.getItem("currentUser")
@@ -20,25 +21,41 @@ export class AuthService {
 
   public get currentUserValue(): User | null {
     return this.currentUserSubject.value
-  }  register(user: User): Observable<boolean> {
-    return this.http.post<{message: string, user: User, token: string}>(
+  }
+
+  public getToken(): string | null {
+    return localStorage.getItem('token')
+  }
+
+  private setToken(token: string): void {
+    localStorage.setItem('token', token)
+  }
+
+  register(user: User): Observable<boolean> {
+    return this.http.post<{message: string, user: User, token: string}>( 
       `${this.apiUrl}/auth/register`, 
       user,
       { 
-        withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
-        }
+        },
+        withCredentials: false
       }
     ).pipe(
+      tap(response => {
+        if (response.token) {
+          this.setToken(response.token)
+          this.currentUserSubject.next(response.user)
+          localStorage.setItem('currentUser', JSON.stringify(response.user))
+        }
+      }),
       map(response => {
-        // El registro fue exitoso
-        return true;
+        return true
       }),
       catchError(error => {
-        console.error('Error en el registro:', error);
-        throw error;
+        console.error('Error en el registro:', error)
+        throw error
       })
     );
   }  login(usernameOrEmail: string, password: string): Observable<User | null> {
@@ -46,13 +63,10 @@ export class AuthService {
       email: usernameOrEmail.includes('@') ? usernameOrEmail : undefined,
       username: !usernameOrEmail.includes('@') ? usernameOrEmail : undefined,
       password
-    };
-
-    return this.http.post<{message: string, user: User, token: string}>(
+    };    return this.http.post<{message: string, user: User, token: string}>(
       `${this.apiUrl}/auth/login`, 
       loginData,
       {
-        withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
@@ -75,18 +89,17 @@ export class AuthService {
         throw error;
       })
     );
-  }
-  logout(): void {
+  }  logout(): void {
+    // Primero notificar el cambio de estado para que los servicios dependientes se actualicen
+    this.currentUserSubject.next(null);
+    
+    // Luego limpiar el almacenamiento local
     localStorage.removeItem("currentUser");
     localStorage.removeItem("token");
-    this.currentUserSubject.next(null);
+    localStorage.removeItem("cart"); // Asegurarnos de limpiar también el carrito local
   }
 
   isLoggedIn(): boolean {
-    return !!this.currentUserValue && !!localStorage.getItem("token");
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem("token");
+    return !!this.currentUserValue && !!this.getToken();
   }
 }
