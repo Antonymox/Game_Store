@@ -73,7 +73,7 @@ import { Cart } from "../models/cart.model";
           
           <div class="user-menu" *ngIf="currentUser">
             <div class="user-info">
-              <span>Hola, {{ currentUser.firstName || currentUser.username }}</span>
+              <span>Hola, {{ currentUser.username || currentUser.username }}</span>
               <div class="dropdown">
                 <a routerLink="/profile">Mi Perfil</a>
                 <a routerLink="/orders">Mis Pedidos</a>
