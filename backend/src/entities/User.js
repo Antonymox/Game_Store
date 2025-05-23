@@ -1,7 +1,6 @@
 const { EntitySchema } = require("typeorm")
 
-module.exports = new EntitySchema({
-  name: "User",
+module.exports = new EntitySchema({  name: "User",
   tableName: "users",
   columns: {
     id: {
@@ -31,6 +30,23 @@ module.exports = new EntitySchema({
     password: {
       type: "varchar",
       length: 255,
+    },    resetPasswordToken: {
+      type: "varchar",
+      length: 255,
+      nullable: true,
+    },
+    resetPasswordExpires: {
+      type: "timestamp",
+      nullable: true,
+    },
+    resetPasswordCode: {
+      type: "varchar",
+      length: 6, // Código de 6 dígitos
+      nullable: true,
+    },
+    resetPasswordCodeExpires: {
+      type: "timestamp",
+      nullable: true,
     },
     avatar: {
       type: "varchar",

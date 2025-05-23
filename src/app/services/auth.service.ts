@@ -98,6 +98,62 @@ export class AuthService {
     localStorage.removeItem("token");
     localStorage.removeItem("cart"); // Asegurarnos de limpiar también el carrito local
   }
+    // Método para solicitar restablecimiento de contraseña
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post<{message: string, token?: string}>(
+      `${this.apiUrl}/auth/forgot-password`,
+      { email },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }
+    ).pipe(
+      catchError(error => {
+        console.error('Error en la solicitud de restablecimiento de contraseña:', error);
+        throw error;
+      })
+    );
+  }
+  
+  // Método para verificar código
+  verifyCode(email: string, code: string): Observable<any> {
+    return this.http.post<{message: string, token: string}>(
+      `${this.apiUrl}/auth/verify-code`,
+      { email, code },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }
+    ).pipe(
+      catchError(error => {
+        console.error('Error al verificar el código:', error);
+        throw error;
+      })
+    );
+  }
+  
+  // Método para restablecer contraseña
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post<{message: string}>(
+      `${this.apiUrl}/auth/reset-password`,
+      { token, newPassword },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }
+    ).pipe(
+      catchError(error => {
+        console.error('Error al restablecer la contraseña:', error);
+        throw error;
+      })
+    );
+  }
 
   isLoggedIn(): boolean {
     return !!this.currentUserValue && !!this.getToken();
