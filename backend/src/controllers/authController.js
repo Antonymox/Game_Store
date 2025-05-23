@@ -7,7 +7,7 @@ const User = require("../entities/User")
 exports.register = async (req, res) => {
   try {
     const userRepository = getRepository(User)
-    const { username, email, password } = req.body
+    const { username, email, password, firstName, lastName } = req.body
 
     // Verificar si el usuario ya existe
     const existingUser = await userRepository.findOne({
@@ -26,6 +26,8 @@ exports.register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      firstName,
+      lastName,
       role: "user",
     })
 

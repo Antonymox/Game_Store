@@ -2,20 +2,43 @@ const jwt = require("jsonwebtoken")
 
 // Middleware para verificar el token JWT
 exports.verifyToken = (req, res, next) => {
+  console.log('Headers recibidos:', req.headers)
   const authHeader = req.headers.authorization
 
   if (!authHeader) {
-    return res.status(401).json({ message: "No se proporcionó token de autenticación" })
+    console.log('No se encontró el header de autorización')
+    return res.status(401).json({ 
+      message: "No se proporcionó token de autenticación",
+      details: "No se encontró el header Authorization"
+    })
   }
 
-  const token = authHeader.split(" ")[1]
+  const parts = authHeader.split(" ")
+  if (parts.length !== 2 || parts[0] !== "Bearer") {
+    return res.status(401).json({ 
+      message: "Formato de token inválido",
+      details: "El header debe ser 'Bearer <token>'"
+    })
+  }
+
+  const token = parts[1]
+  console.log('Token extraído:', token)
 
   try {
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET no está configurado")
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    console.log('Token decodificado:', decoded)
     req.user = decoded
     next()
   } catch (error) {
-    return res.status(401).json({ message: "Token inválido o expirado" })
+    console.error('Error al verificar el token:', error)
+    return res.status(401).json({ 
+      message: "Token inválido o expirado",
+      details: error.message
+    })
   }
 }
 
